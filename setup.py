@@ -11,5 +11,5 @@ setup(name = 'pyIface',
       author = 'Alfredo Miranda',
       author_email = 'alfredocdmiranda@gmail.com',
       url = 'https://github.com/alfredocdmiranda/pyIface',
-      long_description = "It is an interface to get NIC information",
+      license='MIT',
       ext_modules = [module1])
