@@ -8,7 +8,21 @@
 
 typedef struct{
     PyObject_HEAD
-    PyObject *name; /* first name */
+    PyObject        *name;
+    PyObject        *inet_addr;
+    PyObject        *inet6_addr;
+    PyObject        *hw_addr;
+    PyObject        *broad_addr;
+    PyObject        *inet_mask;
+    PyObject        *inet6_mask;
+    PyObject        *running;
+    PyObject        *updown;
+    unsigned int    flags;
+    unsigned int    tx_bytes;
+    unsigned int    rx_bytes;
+    unsigned int    tx_packets;
+    unsigned int    rx_packets;
+    
 }Iface;
 
 static void Iface_dealloc(Iface* self);

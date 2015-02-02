@@ -1,5 +1,7 @@
 #include "pyiface.h"
 
+//TODO Create method to update tx/rx packets/bytes
+
 //Iface Object Definition
 static void
 Iface_dealloc(Iface* self){
@@ -18,6 +20,51 @@ Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds){
             Py_DECREF(self);
             return NULL;
         }
+        self->inet_addr = PyString_FromString("");
+        if (self->inet_addr == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->inet6_addr = PyString_FromString("");
+        if (self->inet6_addr == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->hw_addr = PyString_FromString("");
+        if (self->hw_addr == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->broad_addr = PyString_FromString("");
+        if (self->broad_addr == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->inet_mask = PyString_FromString("");
+        if (self->inet_mask == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->inet6_mask = PyString_FromString("");
+        if (self->inet6_mask == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->running = PyBool_FromLong(0);
+        if (self->running == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->updown = PyBool_FromLong(0);
+        if (self->updown == NULL){
+            Py_DECREF(self);
+            return NULL;
+        }
+        self->flags = 0;
+        self->tx_bytes = 0;
+        self->rx_bytes = 0;
+        self->tx_packets = 0;
+        self->rx_packets = 0;
     }
 
     return (PyObject *)self;
@@ -25,13 +72,26 @@ Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds){
 
 static int
 Iface_init(Iface *self, PyObject *args, PyObject *kwds){
-    PyObject *name=NULL, *tmp;
+    PyObject *name=NULL, *inet_addr=NULL, *inet6_addr=NULL, *hw_addr=NULL, 
+             *broad_addr=NULL, *inet_mask=NULL, *inet6_mask=NULL, 
+             *running=NULL, *updown=NULL, *tmp;
 
-    static char *kwlist[] = {"name", NULL};
+    static char *kwlist[] = {"name", "inet_addr", "inet6_addr", "hw_addr", 
+                             "broad_addr", "inet_mask", "inet6_mask", 
+                             "running", "updown", "flags", "tx_bytes", 
+                             "rx_bytes", "tx_packets", "rx_packets", 
+                             NULL};
 
-    if(!PyArg_ParseTupleAndKeywords(args, kwds, "|O", kwlist, 
-                                     &name))
-        return -1; 
+    if(!PyArg_ParseTupleAndKeywords(args, kwds, "|OOOOOOOiii", kwlist, 
+                                     &name, &inet_addr, &inet6_addr, 
+                                     &hw_addr, &broad_addr, &inet_mask, 
+                                     &inet6_mask, &running, &updown, 
+                                     &self->flags, &self->tx_bytes, 
+                                     &self->rx_bytes, &self->tx_packets, 
+                                     &self->rx_packets))
+    {
+        return -1;
+    }
 
     if(name){
         tmp = self->name;
@@ -39,19 +99,101 @@ Iface_init(Iface *self, PyObject *args, PyObject *kwds){
         self->name = name;
         Py_XDECREF(tmp);
     }
+    
+    if(inet_addr){
+        tmp = self->inet_addr;
+        Py_INCREF(inet_addr);
+        self->inet_addr = inet_addr;
+        Py_XDECREF(tmp);
+    }
+    
+    if(inet6_addr){
+        tmp = self->inet6_addr;
+        Py_INCREF(inet6_addr);
+        self->inet6_addr = inet6_addr;
+        Py_XDECREF(tmp);
+    }
+    
+    if(hw_addr){
+        tmp = self->hw_addr;
+        Py_INCREF(hw_addr);
+        self->hw_addr = hw_addr;
+        Py_XDECREF(tmp);
+    }
+    
+    if(broad_addr){
+        tmp = self->broad_addr;
+        Py_INCREF(broad_addr);
+        self->broad_addr = broad_addr;
+        Py_XDECREF(tmp);
+    }
+    
+    if(inet_mask){
+        tmp = self->inet_mask;
+        Py_INCREF(inet_mask);
+        self->inet_mask = inet_mask;
+        Py_XDECREF(tmp);
+    }
+    
+    if(inet6_mask){
+        tmp = self->inet6_mask;
+        Py_INCREF(inet6_mask);
+        self->inet6_mask = inet6_mask;
+        Py_XDECREF(tmp);
+    }
+    
+    if(running){
+        tmp = self->running;
+        Py_INCREF(running);
+        self->running = running;
+        Py_XDECREF(tmp);
+    }
+    
+    if(updown){
+        tmp = self->updown;
+        Py_INCREF(updown);
+        self->updown = updown;
+        Py_XDECREF(tmp);
+    }
 
     return 0;
 }
 
 static PyMemberDef Iface_members[] = {
-    {"name", T_OBJECT_EX, offsetof(Iface, name), 0, "Interface's name"},
+    {"name", T_OBJECT_EX, offsetof(Iface, name), 
+        0, "Interface's name"},
+    {"inet_addr", T_OBJECT_EX, offsetof(Iface, inet_addr), 
+        0, "Interface's IPv4 address"},
+    {"inet6_addr", T_OBJECT_EX, offsetof(Iface, inet6_addr), 
+        0, "Interface's IPv6 address"},
+    {"hw_addr", T_OBJECT_EX, offsetof(Iface, hw_addr), 
+        0, "Interface's MAC address"},
+    {"broad_addr", T_OBJECT_EX, offsetof(Iface, broad_addr), 
+        0, "Interface's Broadcast address"},
+    {"inet_mask", T_OBJECT_EX, offsetof(Iface, inet_mask), 
+        0, "Interface's Network Mask v4 address"},
+    {"inet6_mask", T_OBJECT_EX, offsetof(Iface, inet6_mask), 
+        0, "Interface's Network Mask v6 address"},
+    {"running", T_OBJECT_EX, offsetof(Iface, running), 
+        0, "Indicates if interface is running or not"},
+    {"updown", T_OBJECT_EX, offsetof(Iface, updown), 
+        0, "Indicates if interfaces is Up or Down"},
+    {"flags", T_INT, offsetof(Iface, flags), 
+        0, "Other Interface's flags"},
+    {"tx_bytes", T_INT, offsetof(Iface, tx_bytes), 
+        0, "Amount of bytes that the interface transmitted"},
+    {"rx_bytes", T_INT, offsetof(Iface, rx_bytes), 
+        0, "Amount of bytes that the interface received"},
+    {"tx_packets", T_INT, offsetof(Iface, tx_packets), 
+        0, "Amount of packets that the interface transmitted"},
+    {"rx_packets", T_INT, offsetof(Iface, rx_packets), 
+        0, "Amount of packets that the interface received"},
     {NULL}  /* Sentinel */
 };
 
 static PyMethodDef Iface_methods[] = {
     {"get_interface", (PyCFunction)Iface_get_interface, METH_VARARGS|METH_CLASS,
-     "Return the name, combining the first and last name"
-    },
+     "Return a Iface object with all its information."},
     {NULL}  /* Sentinel */
 };
 
@@ -100,15 +242,29 @@ static PyTypeObject IfaceType = {
 static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds){
     const char *iface_name;
     struct iface ifa;
-    Iface *v = (Iface*) Iface_new(&IfaceType, args, kwds);
+    Iface *self = (Iface*) Iface_new(&IfaceType, args, kwds);
     
     if (!PyArg_ParseTuple(args, "s", &iface_name))
         return NULL;
     
     get_info_interface(&ifa, iface_name);
-    //Iface_init(v, args, kwds);
-    v->name = PyString_FromString(ifa.name);
-    return v;
+    Iface_init(self, args, kwds);
+    self->name = PyString_FromString(ifa.name);
+    self->inet_addr = PyString_FromString(ifa.inet_addr);
+    self->inet6_addr = PyString_FromString(ifa.inet6_addr);
+    self->hw_addr = PyString_FromString(ifa.hw_addr);
+    self->broad_addr = PyString_FromString(ifa.broad_addr);
+    self->inet_mask = PyString_FromString(ifa.inet_mask);
+    self->inet6_mask = PyString_FromString(ifa.inet6_mask);
+    self->running = PyBool_FromLong(ifa.running);
+    self->updown = PyBool_FromLong(ifa.updown);
+    self->flags = ifa.flags;
+    self->tx_bytes = ifa.tx_bytes;
+    self->rx_bytes = ifa.rx_bytes;
+    self->rx_packets = ifa.rx_packets;
+    self->tx_packets = ifa.tx_packets;
+
+    return self;
  }
 
 //Module Methods
@@ -138,6 +294,7 @@ static PyMethodDef module_methods[] = {
     {NULL, NULL, 0, NULL}
 };
 
+//Init Module
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
 #endif
