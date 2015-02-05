@@ -272,16 +272,14 @@ static PyObject *
 pyiface_get_interfaces(PyObject *self, PyObject *args)
 {
     char **list;
+    int len_list;
     int i;
-    list = get_list_interfaces();
+    len_list = get_list_interfaces(&list);
     PyObject *t;
     
     t = PyList_New(0);
     
-    for(i=0; i < MAX_IFACE; i++){
-        if(list[i] == '\0'){
-            break;
-        }
+    for(i=0; i < len_list; i++){
         PyList_Append(t, PyString_FromString(list[i]));
     }
     
