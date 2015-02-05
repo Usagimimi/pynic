@@ -35,7 +35,7 @@ void init_iface(struct iface *ifa){
     ifa->rx_packets = 0;
 }
 
-int get_info_interface(struct iface* ifa,const char *name_iface){
+int get_info_interface(struct iface* ifa, const char *name_iface){
     struct ifaddrs *ifaddr, *aux;
     struct rtnl_link_stats *stats;
     
@@ -91,15 +91,15 @@ int get_info_interface(struct iface* ifa,const char *name_iface){
     return 0;
 }
 
-char ** get_list_interfaces(){
-    char **list_ifaces, **aux_list_ifaces;
+int get_list_interfaces(char *** list_ifaces){
+    char **aux_list_ifaces;
     struct ifaddrs *ifaddr, *ifa;
     int i = 0, j;
 
-    list_ifaces = malloc(sizeof(char*)*MAX_IFACE);
+    aux_list_ifaces = malloc(sizeof(char*)*MAX_IFACE);
 
     if (getifaddrs(&ifaddr) == -1) {
-        return NULL;
+        return -1;
     }
    
     for(ifa=ifaddr; ifa!=NULL; ifa=ifa->ifa_next){
@@ -109,7 +109,7 @@ char ** get_list_interfaces(){
         
         for(j=0; j<i; j++){
             //Check if it already exists the interface inside the list
-            if(strcmp(ifa->ifa_name, list_ifaces[j]) == 0){
+            if(strcmp(ifa->ifa_name, aux_list_ifaces[j]) == 0){
                 break;
             }
         }
@@ -120,27 +120,16 @@ char ** get_list_interfaces(){
             continue;
         }
         
-        list_ifaces[i] = malloc(sizeof(char)*IFACE_NAME_LENGTH);
-        strcpy(list_ifaces[i], ifa->ifa_name);
+        aux_list_ifaces[i] = malloc(sizeof(char)*IFACE_NAME_LENGTH);
+        strcpy(aux_list_ifaces[i], ifa->ifa_name);
         i++;
     }
     
+    *list_ifaces = aux_list_ifaces;
+    
     freeifaddrs(ifaddr);
-    aux_list_ifaces = malloc(sizeof(char*)*3);
     
-    for(j=0;j<i;j++){
-        aux_list_ifaces[j] = malloc(sizeof(char)*IFACE_NAME_LENGTH);
-        strcpy(aux_list_ifaces[j], list_ifaces[j]);
-    }
-    
-    aux_list_ifaces[i] = '\0';
-
-    /*for(j=0;j<MAX_IFACE;j++){
-        free(list_ifaces[i]);
-    }
-    free(list_ifaces);*/
-    
-    return aux_list_ifaces;
+    return j+1;
 }
 
 char * get_mac(const char *name_iface){
@@ -162,4 +151,37 @@ char * get_mac(const char *name_iface){
         return NULL;
     }
     return ret;
+}
+
+int update_tx_rx(struct iface* ifa){
+    //TODO Verify errors
+    
+    struct ifaddrs *ifaddr, *aux;
+    struct rtnl_link_stats *stats;
+    
+    if (getifaddrs(&ifaddr) == -1) {
+        return -1;
+    }
+    
+    for(aux=ifaddr; aux!=NULL; aux=aux->ifa_next){
+        if (aux->ifa_addr == NULL){
+            continue;
+        }
+        
+        if(strcmp(aux->ifa_name, ifa->name) == 0){
+            if(aux->ifa_addr->sa_family == AF_PACKET){
+                stats = aux->ifa_data;
+
+                ifa->tx_bytes =  stats->tx_bytes;
+                ifa->rx_bytes =  stats->rx_bytes;
+                ifa->tx_packets =  stats->tx_packets;
+                ifa->rx_packets =  stats->rx_packets;
+                
+                break;
+            }
+        }
+    }
+    freeifaddrs(ifaddr);
+    
+    return 0;
 }
