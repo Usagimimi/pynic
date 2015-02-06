@@ -1,5 +1,5 @@
 # pyIface
-A Python interface to get Network Interfaces on Linux.
+A Python interface to get Network Interface Cards(NIC) on Linux.
 
 ## Installation
 
@@ -13,13 +13,13 @@ You can see some examples in examples directory.
 
 ## Methods
 
-    get_interfaces()                    -   It lists all available interfaces
+    get_list_interfaces()                    -   It lists all available interfaces
 
 ## Iface class
 
 This class store all necessary information about the interfaces.
 
-## Attributes
+### Attributes
 
     String  name                        -   Interface's name
     String  inet_addr                   -   Interface's IPv4 address
@@ -36,6 +36,10 @@ This class store all necessary information about the interfaces.
     Integer tx_packets                  -   Amount of packets that the interface transmitted
     Integer rx_packets                  -   Amount of packets that the interface received
 
-## Class Methods
+### Methods
 
-Iface.get_interface(iface_name)         -   It return an Iface object with all information about it
+    update_tx_rx()                      -   Update NIC's TX/RX information (bytes and packets)
+
+### Class Methods
+
+    Iface.get_interface(iface_name)     -   It return an Iface object with all information about it
