@@ -94,7 +94,7 @@ int get_info_interface(struct iface* ifa, const char *name_iface){
 int get_list_interfaces(char *** list_ifaces){
     char **aux_list_ifaces;
     struct ifaddrs *ifaddr, *ifa;
-    int i = 0, j;
+    int i = 0, j = -1;
 
     aux_list_ifaces = malloc(sizeof(char*)*MAX_IFACE);
 

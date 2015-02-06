@@ -18,10 +18,10 @@ typedef struct{
     PyObject        *running;
     PyObject        *updown;
     unsigned int    flags;
-    unsigned int    tx_bytes;
-    unsigned int    rx_bytes;
-    unsigned int    tx_packets;
-    unsigned int    rx_packets;
+    PyObject        *tx_bytes;
+    PyObject        *rx_bytes;
+    PyObject        *tx_packets;
+    PyObject        *rx_packets;
     
 }Iface;
 
@@ -29,6 +29,7 @@ static void Iface_dealloc(Iface* self);
 static int Iface_init(Iface *self, PyObject *args, PyObject *kwds);
 static PyObject * Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds);
+static PyObject * Iface_update_tx_rx(Iface *self);
 
 static PyObject * Iface_get_interfaces(Iface* self);
 
