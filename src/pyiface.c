@@ -332,7 +332,7 @@ Iface_update_tx_rx(Iface *self){
 
 //Module Methods
 static PyObject *
-pyiface_get_interfaces(PyObject *self, PyObject *args)
+pyiface_get_list_interfaces(PyObject *self, PyObject *args)
 {
     char **list;
     int len_list;
@@ -351,7 +351,7 @@ pyiface_get_interfaces(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef module_methods[] = {
-    {"get_interfaces",  pyiface_get_interfaces, METH_VARARGS, "List all available Network Interface."},
+    {"get_list_interfaces",  pyiface_get_list_interfaces, METH_NOARGS, "List all available Network Interface."},
     {NULL, NULL, 0, NULL}
 };
 
