@@ -6,7 +6,6 @@
 #
 # This is a sample code to pyIface, which lists NICs on computer and 
 # show information about them.
-
 import pyiface
 
 list_interfaces = pyiface.get_interfaces()
@@ -14,7 +13,7 @@ list_interfaces = pyiface.get_interfaces()
 for pos, i in enumerate(list_interfaces):
     print("{0} - {1}".format(pos, i))
 
-opt = int(input("Chosse the interface: "))
+opt = int(input("Choose the interface: "))
 
 print("########## Interface Info ##########")
 iface = pyiface.Iface.get_interface(list_interfaces[opt])
