@@ -8,7 +8,7 @@
 # show information about them.
 import pyiface
 
-list_interfaces = pyiface.get_interfaces()
+list_interfaces = pyiface.get_list_interfaces()
 
 for pos, i in enumerate(list_interfaces):
     print("{0} - {1}".format(pos, i))
