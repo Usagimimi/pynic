@@ -2,14 +2,14 @@
 
 # Author: Alfredo Miranda
 # E-mail: alfredocdmiranda@gmail.com
-# Date: 02/05/2015
+# Date: 03/01/2015
 #
 # This is a sample code to pyIface, which calculate an instant speed on 
 # your selected interface during a certaing time.
 import time
-import pyiface
+import pynic
 
-list_interfaces = pyiface.get_list_interfaces()
+list_interfaces = pynic.get_list_interfaces()
 
 for pos, i in enumerate(list_interfaces):
     print("{0} - {1}".format(pos, i))
@@ -18,7 +18,7 @@ opt = int(input("Choose the interface: "))
 delay = int(input("How much time(in seconds) do you want calculate? "))
 
 print("########## Interface Info Speed ##########")
-iface = pyiface.Iface.get_interface(list_interfaces[opt])
+iface = pynic.Iface.get_interface(list_interfaces[opt])
 
 last_tx = iface.tx_bytes
 last_rx = iface.rx_bytes

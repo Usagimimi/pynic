@@ -25,12 +25,14 @@ typedef struct{
     
 }Iface;
 
+static PyTypeObject IfaceType;
+
 static void Iface_dealloc(Iface* self);
-static int Iface_init(Iface *self, PyObject *args, PyObject *kwds);
 static PyObject * Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
-static PyObject * Iface_get_list_interface(PyObject *cls, PyObject *args, PyObject *kwds);
+static int Iface_init(Iface *self, PyObject *args, PyObject *kwds);
+static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds);
 static PyObject * Iface_update_tx_rx(Iface *self);
 
-static PyObject * Iface_get_interfaces(Iface* self);
+static PyObject * pynic_get_list_interfaces(PyObject *self, PyObject *args);
 
 #endif

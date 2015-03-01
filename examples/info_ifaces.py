@@ -2,13 +2,13 @@
 
 # Author: Alfredo Miranda
 # E-mail: alfredocdmiranda@gmail.com
-# Date: 02/02/2015
+# Date: 03/01/2015
 #
 # This is a sample code to pyIface, which lists NICs on computer and 
 # show information about them.
-import pyiface
+import pynic
 
-list_interfaces = pyiface.get_list_interfaces()
+list_interfaces = pynic.get_list_interfaces()
 
 for pos, i in enumerate(list_interfaces):
     print("{0} - {1}".format(pos, i))
@@ -16,7 +16,7 @@ for pos, i in enumerate(list_interfaces):
 opt = int(input("Choose the interface: "))
 
 print("########## Interface Info ##########")
-iface = pyiface.Iface.get_interface(list_interfaces[opt])
+iface = pynic.Iface.get_interface(list_interfaces[opt])
 
 print("Name: {0}".format(iface.name))
 print("IPv4: {0}".format(iface.inet_addr))

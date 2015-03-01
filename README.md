@@ -1,5 +1,13 @@
-# pyIface
-A Python interface to get Network Interface Cards(NIC) on Linux.
+# pyNIC
+A Python interface to get Network Interface Cards(NIC) information on Linux.
+
+## Dependencies
+
+You must install the Python headers.
+
+On Debian and Ubuntu:
+
+    $ sudo apt-get install python-dev
 
 ## Installation
 
@@ -7,13 +15,13 @@ A Python interface to get Network Interface Cards(NIC) on Linux.
 
 ## Usage
 
-    import pyiface
+    import pynic
 
 You can see some examples in examples directory.
 
-## Methods
+## Functions
 
-    get_list_interfaces()                    -   It lists all available interfaces
+    get_list_interfaces()               -   It lists all available interfaces
 
 ## Iface class
 

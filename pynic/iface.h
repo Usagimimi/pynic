@@ -1,9 +1,13 @@
 #ifndef IFACE_H
 #define IFACE_H
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE     /* To get defns of NI_MAXSERV and NI_MAXHOST */
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <ifaddrs.h>
 #include <netdb.h>
 #include <linux/if.h>
