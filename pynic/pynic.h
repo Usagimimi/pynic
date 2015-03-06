@@ -4,6 +4,7 @@
 #include <Python.h>
 #include "structmember.h"
 
+#include "config.h"
 #include "iface.h"
 
 typedef struct{
@@ -32,6 +33,8 @@ static PyObject * Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static int Iface_init(Iface *self, PyObject *args, PyObject *kwds);
 static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds);
 static PyObject * Iface_update_tx_rx(Iface *self);
+static PyObject * Iface_repr(Iface *self);
+static PyObject * Iface_str(Iface *self);
 
 static PyObject * pynic_get_list_interfaces(PyObject *self, PyObject *args);
 

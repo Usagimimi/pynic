@@ -33,7 +33,7 @@ static PyMemberDef Iface_members[] = {
         0, "Amount of packets that the interface transmitted"},
     {"rx_packets", T_OBJECT_EX, offsetof(Iface, rx_packets), 
         0, "Amount of packets that the interface received"},
-    {NULL}  /* Sentinel */
+    {NULL}
 };
 
 /*
@@ -44,7 +44,7 @@ static void
 Iface_dealloc(Iface* self)
 {
     Py_XDECREF(self->name);
-    self->ob_type->tp_free((PyObject*)self);
+    Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
 static PyObject *
@@ -284,15 +284,24 @@ static PyObject *
 Iface_update_tx_rx(Iface *self)
 {
     struct iface ifa;
+    PyObject* tmp;
+    
+    #if PY_MAJOR_VERSION >= 3
+        tmp = PyUnicode_AsUTF8String(self->name);
+    #else
+        tmp = self->name;
+    #endif
     
     init_iface(&ifa);
     
-    ifa.name = PyString_AsString(self->name);
+    ifa.name = PyString_AsString(tmp);
     update_tx_rx(&ifa);
     self->tx_bytes = PyInt_FromLong(ifa.tx_bytes);
     self->rx_bytes = PyInt_FromLong(ifa.rx_bytes);
     self->tx_packets = PyInt_FromLong(ifa.tx_packets);
     self->rx_packets = PyInt_FromLong(ifa.rx_packets);
+    
+    Py_DECREF(tmp);
     
     Py_RETURN_TRUE;
 }
@@ -313,13 +322,62 @@ static PyMethodDef Iface_methods[] = {
  * Callback Routines
  */
 
+static PyObject *
+Iface_repr(Iface *self)
+{
+    PyObject * tmp;
+    char *name;
+    
+    if(PyString_Check(self->name)){
+        #if PY_MAJOR_VERSION >= 3
+            tmp = PyUnicode_AsUTF8String(self->name);
+        #else
+            tmp = self->name;
+        #endif
+
+        name = PyString_AsString(tmp);
+        
+        #if PY_MAJOR_VERSION >= 3
+            Py_DECREF(tmp);
+        #endif
+        
+        return PyString_FromString(name);
+    }
+    
+    return NULL;
+}
+
+static PyObject *
+Iface_str(Iface *self)
+{ 
+    PyObject * tmp;
+    char *name;
+    
+    if(PyString_Check(self->name)){
+        #if PY_MAJOR_VERSION >= 3
+            tmp = PyUnicode_AsUTF8String(self->name);
+        #else
+            tmp = self->name;
+        #endif
+
+        name = PyString_AsString(tmp);
+        
+        #if PY_MAJOR_VERSION >= 3
+            Py_DECREF(tmp);
+        #endif
+        
+        return PyString_FromString(name);
+    }
+    
+    return NULL;
+}
+
 /*
  * Type definition
  */
 
 static PyTypeObject IfaceType = {
-    PyObject_HEAD_INIT(NULL)
-    0,                                          /* ob_size */
+    PyVarObject_HEAD_INIT(NULL, 0)
     "pyiface.Iface",                            /* tp_name */
     sizeof(Iface),                              /* tp_basicsize */
     0,                                          /* tp_itemsize */
@@ -328,13 +386,13 @@ static PyTypeObject IfaceType = {
     0,                                          /* tp_getattr */
     0,                                          /* tp_setattr */
     0,                                          /* tp_compare */
-    0,                                          /* tp_repr */
+    (reprfunc)Iface_repr,                       /* tp_repr */
     0,                                          /* tp_as_number */
     0,                                          /* tp_as_sequence */
     0,                                          /* tp_as_mapping */
     0,                                          /* tp_hash */
     0,                                          /* tp_call */
-    0,                                          /* tp_str */
+    (reprfunc)Iface_str,                        /* tp_str */
     0,                                          /* tp_getattro */
     0,                                          /* tp_setattro */
     0,                                          /* tp_as_buffer */
@@ -392,29 +450,53 @@ static PyMethodDef module_functions[] = {
     {NULL, NULL, 0, NULL}
 };
 
+#if PY_MAJOR_VERSION >= 3
+/*
+ * Module Definition
+ */
+    static struct PyModuleDef module_pynic = {
+        PyModuleDef_HEAD_INIT,
+        "pynic",                                                    /* m_name */
+        "Module for getting Network Interface Cards information.",  /* m_doc */
+        -1,                                                         /* m_size */
+        module_functions,                                           /* m_methods */
+        NULL,                                                       /* m_reload */
+        NULL,                                                       /* m_traverse */
+        NULL,                                                       /* m_clear */
+        NULL,                                                       /* m_free */
+    };
+#endif
+
 /* 
  * Init Module 
  */
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
-#define PyMODINIT_FUNC void
+#ifndef PyMODINIT_FUNC
+    #define PyMODINIT_FUNC void
 #endif
+
 PyMODINIT_FUNC
-initpynic(void) 
+MOD_INIT(pynic)
 {
     PyObject* module;
 
     if (PyType_Ready(&IfaceType) < 0){
-        return;
+        RETURN_INIT(NULL);
     }
-
+    
+    #if PY_MAJOR_VERSION >= 3
+    module = PyModule_Create(&module_pynic);
+    #else
     module = Py_InitModule3("pynic", module_functions,
                        "Module for getting Network Interface Cards information.");
+    #endif
 
     if (module == NULL){
-        return;
+        RETURN_INIT(NULL);
     }
 
     Py_INCREF(&IfaceType);
     PyModule_AddObject(module, "Iface", (PyObject *)&IfaceType);
+    
+    RETURN_INIT(module);
 }

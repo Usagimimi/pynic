@@ -9,7 +9,7 @@ Documentation
 
 Currently, all documentation can be accessed in project's GitHub page.
 
-Depencies
+Dependencies
 =========
 
 You must install the Python headers.
@@ -28,3 +28,10 @@ Support
 
 Currently, this project just supports Python 2.7 and Linux systems. Soon, 
 it should support Python 3.4.
+
+What's new
+===========
+- Support Python 3.x
+- Added repr e str functions
+- Fixed some bugs
+- Increased reliability
