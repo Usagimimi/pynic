@@ -8,7 +8,7 @@ void free_iface(struct iface *ifa){
 }
 
 void init_iface(struct iface *ifa){
-    ifa->name = malloc(sizeof(char)*IFACE_NAME_LENGTH);
+    ifa->name = malloc(sizeof(char)*IFNAMSIZ);
     (ifa->name)[0] = '\0'; 
     ifa->inet_addr = malloc(sizeof(char)*NI_MAXHOST);
     (ifa->inet_addr)[0] = '\0';
@@ -38,6 +38,7 @@ void init_iface(struct iface *ifa){
 int get_info_interface(struct iface* ifa, const char *name_iface){
     struct ifaddrs *ifaddr, *aux;
     struct rtnl_link_stats *stats;
+    int find = -1;
     
     init_iface(ifa);
     
@@ -52,6 +53,7 @@ int get_info_interface(struct iface* ifa, const char *name_iface){
         
         if(strcmp(aux->ifa_name, name_iface) == 0){
             if(aux->ifa_addr->sa_family == AF_PACKET){
+                find = 0;
                 strcpy(ifa->name, aux->ifa_name);
                 ifa->hw_addr = get_mac(name_iface);
                 
@@ -88,13 +90,13 @@ int get_info_interface(struct iface* ifa, const char *name_iface){
     }
     freeifaddrs(ifaddr);
     
-    return 0;
+    return find;
 }
 
 int get_list_interfaces(char *** list_ifaces){
     char **aux_list_ifaces;
     struct ifaddrs *ifaddr, *ifa;
-    int i = 0, j = -1;
+    int i = 0, j;
 
     aux_list_ifaces = malloc(sizeof(char*)*MAX_IFACE);
 
@@ -151,6 +153,130 @@ char * get_mac(const char *name_iface){
         return NULL;
     }
     return ret;
+}
+
+int set_inet_addr(struct iface *ifa, const char *inet_addr){
+    struct ifreq ifr;
+    struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    if(inet_pton(AF_INET, inet_addr, &addr->sin_addr) == 0){
+        result = -1;
+    }
+    
+    if(ioctl(fd, SIOCSIFADDR, &ifr) == -1){
+        result = errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
+}
+
+int set_hw_addr(struct iface *ifa, const char *hw_addr){
+    /* TODO It is not working yet */
+    
+    struct ifreq ifr;
+    
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    /*strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    if(ioctl(fd, SIOCSIFHWADDR, &ifr) == -1){
+        result = errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }*/
+    
+    close(fd);
+    
+    return result;
+}
+
+int set_mask_addr(struct iface *ifa, const char *mask_addr){
+    struct ifreq ifr;
+    struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    if(inet_pton(AF_INET, mask_addr, &addr->sin_addr) == 0){
+        result = -1;
+    }
+    
+    if(ioctl(fd, SIOCSIFNETMASK, &ifr) == -1){
+        result = errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
+}
+
+int set_broad_addr(struct iface *ifa, const char *broad_addr){
+    struct ifreq ifr;
+    struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    if(inet_pton(AF_INET, broad_addr, &addr->sin_addr) == 0){
+        result = -1;
+    }
+    
+    if(ioctl(fd, SIOCSIFBRDADDR, &ifr) == -1){
+        result = errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
+}
+
+int set_flags(struct iface *ifa, int flags){
+    struct ifreq ifr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    ifr.ifr_flags |= flags;
+    if(ioctl(fd, SIOCSIFFLAGS, &ifr) == -1){
+        return errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
 }
 
 int update_tx_rx(struct iface* ifa){
