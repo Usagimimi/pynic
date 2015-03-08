@@ -27,6 +27,7 @@ typedef struct{
 }Iface;
 
 static PyTypeObject IfaceType;
+static PyObject *pynicIfaceError;
 
 static void Iface_dealloc(Iface* self);
 static PyObject * Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds);

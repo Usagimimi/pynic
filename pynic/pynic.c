@@ -254,12 +254,18 @@ Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds)
 {
     const char *iface_name;
     struct iface ifa;
-    Iface *self = (Iface*) Iface_new(&IfaceType, args, kwds);
+    Iface *self;
     
-    if (!PyArg_ParseTuple(args, "s", &iface_name))
+    if (!PyArg_ParseTuple(args, "s", &iface_name)){
         return NULL;
+    }
     
-    get_info_interface(&ifa, iface_name);
+    if(get_info_interface(&ifa, iface_name)){
+        PyErr_SetString(pynicIfaceError, "There is no NIC with this name.");
+        return NULL;
+    }
+    
+    self = (Iface*) Iface_new(&IfaceType, args, kwds);
     Iface_init(self, args, kwds);
     
     self->name = PyString_FromString(ifa.name);
@@ -327,7 +333,6 @@ Iface_repr(Iface *self)
 {
     PyObject * tmp;
     char *name;
-    
     if(PyString_Check(self->name)){
         #if PY_MAJOR_VERSION >= 3
             tmp = PyUnicode_AsUTF8String(self->name);
@@ -344,6 +349,7 @@ Iface_repr(Iface *self)
         return PyString_FromString(name);
     }
     
+    PyErr_SetString(pynicIfaceError, "Object's name is not a string object.");
     return NULL;
 }
 
@@ -369,6 +375,7 @@ Iface_str(Iface *self)
         return PyString_FromString(name);
     }
     
+    PyErr_SetString(pynicIfaceError, "Object's name is not a string object.");
     return NULL;
 }
 
@@ -494,7 +501,11 @@ MOD_INIT(pynic)
     if (module == NULL){
         RETURN_INIT(NULL);
     }
-
+    
+    pynicIfaceError = PyErr_NewException("pynic.IfaceError", NULL, NULL);
+    Py_INCREF(pynicIfaceError);
+    PyModule_AddObject(module, "error", pynicIfaceError);
+    
     Py_INCREF(&IfaceType);
     PyModule_AddObject(module, "Iface", (PyObject *)&IfaceType);
     
