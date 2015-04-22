@@ -35,4 +35,4 @@ What's new
 - Added repr e str functions
 - Fixed some bugs
 - Increased reliability
-- Added functions to change 
+- Added functions to change address
