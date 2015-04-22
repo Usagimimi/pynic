@@ -47,7 +47,8 @@ This class store all necessary information about the interfaces.
 ### Methods
 
     update_tx_rx()                      -   Update NIC's TX/RX information (bytes and packets)
+    set_inet_addr(String)               -   Set a new IPv4 Address to the NIC (You must have root permission)
 
 ### Class Methods
 
-    Iface.get_interface(iface_name)     -   It return an Iface object with all information about it
+    Iface.get_interface(String)         -   It return an Iface object with all information about it

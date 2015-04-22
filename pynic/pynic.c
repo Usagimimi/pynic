@@ -286,6 +286,44 @@ Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds)
     return (PyObject*)self;
  }
 
+static PyObject * Iface_set_inet_addr(Iface *self, PyObject *args)
+{
+    const char *inet_addr;
+    struct iface ifa;
+    
+    if (!PyArg_ParseTuple(args, "s", &inet_addr)){
+        return NULL;
+    }
+    
+    PyObject* tmp;
+    
+    #if PY_MAJOR_VERSION >= 3
+        tmp = PyUnicode_AsUTF8String(self->name);
+    #else
+        tmp = self->name;
+    #endif
+    
+    init_iface(&ifa);
+    
+    ifa.name = PyString_AsString(tmp);
+    
+    if(set_inet_addr(&ifa, inet_addr) != 0){
+        PyErr_SetString(pynicIfaceError, "Permision denied.");
+        return NULL;
+    }
+    
+    
+    
+    #if PY_MAJOR_VERSION >= 3
+        /*
+         * Dereferences Unicode objected created for tmp variable.
+         */
+        Py_DECREF(tmp);
+    #endif
+    
+    Py_RETURN_TRUE;
+}
+
 static PyObject *
 Iface_update_tx_rx(Iface *self)
 {
@@ -307,7 +345,12 @@ Iface_update_tx_rx(Iface *self)
     self->tx_packets = PyInt_FromLong(ifa.tx_packets);
     self->rx_packets = PyInt_FromLong(ifa.rx_packets);
     
-    Py_DECREF(tmp);
+    #if PY_MAJOR_VERSION >= 3
+        /*
+         * Dereferences Unicode objected created for tmp variable.
+         */
+        Py_DECREF(tmp);
+    #endif
     
     Py_RETURN_TRUE;
 }
@@ -321,6 +364,8 @@ static PyMethodDef Iface_methods[] = {
      "Return a Iface object with all its information."},
     {"update_tx_rx",  (PyCFunction)Iface_update_tx_rx, METH_NOARGS, 
      "Update NIC's TX/RX information."},
+    {"set_inet_addr",  (PyCFunction)Iface_set_inet_addr, METH_VARARGS, 
+     "Set a new IPv4 Address to the NIC."},
     {NULL}  /* Sentinel */
 };
 

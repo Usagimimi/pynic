@@ -96,7 +96,8 @@ int get_info_interface(struct iface* ifa, const char *name_iface){
 int get_list_interfaces(char *** list_ifaces){
     char **aux_list_ifaces;
     struct ifaddrs *ifaddr, *ifa;
-    int i = 0, j;
+    int i = 0;
+    int j = 0;
 
     aux_list_ifaces = malloc(sizeof(char*)*MAX_IFACE);
 
@@ -110,15 +111,19 @@ int get_list_interfaces(char *** list_ifaces){
         }
         
         for(j=0; j<i; j++){
-            //Check if it already exists the interface inside the list
+            /*
+             * Check if it already exists the interface inside the list
+             */
             if(strcmp(ifa->ifa_name, aux_list_ifaces[j]) == 0){
                 break;
             }
         }
         
         if(j < i){
-            //If j < i, it means that last loop was broken before it finishes
-            //Then, it means that was found a equal string inside the list
+            /*
+             * If j < i, it means that last loop was broken before it finishes
+             * Then, it means that was found a equal string inside the list
+            */
             continue;
         }
         
