@@ -33,7 +33,7 @@ static void Iface_dealloc(Iface* self);
 static PyObject * Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static int Iface_init(Iface *self, PyObject *args, PyObject *kwds);
 static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds);
-static PyObject * Iface_set_inet_addr(Iface *self, PyObject *args);
+static PyObject * Iface_set_inet_addr(Iface *self, PyObject *inet_addr);
 static PyObject * Iface_update_tx_rx(Iface *self);
 static PyObject * Iface_repr(Iface *self);
 static PyObject * Iface_str(Iface *self);

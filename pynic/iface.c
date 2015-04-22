@@ -170,11 +170,15 @@ int set_inet_addr(struct iface *ifa, const char *inet_addr){
     ifr.ifr_addr.sa_family = AF_INET;
     
     if(inet_pton(AF_INET, inet_addr, &addr->sin_addr) == 0){
+        /*
+         * It is a invalid IPv4 address
+         */
         result = -1;
     }
     
-    if(ioctl(fd, SIOCSIFADDR, &ifr) == -1){
+    if(result == 0 && ioctl(fd, SIOCSIFADDR, &ifr) == -1){
         result = errno;
+        printf("%s\n", strerror(errno));
     }
     
     if(result == 0){

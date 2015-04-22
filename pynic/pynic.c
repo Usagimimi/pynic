@@ -286,16 +286,16 @@ Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds)
     return (PyObject*)self;
  }
 
-static PyObject * Iface_set_inet_addr(Iface *self, PyObject *args)
+static PyObject * Iface_set_inet_addr(Iface *self, PyObject *inet_addr)
 {
-    const char *inet_addr;
     struct iface ifa;
+    int result;
+    PyObject* tmp;
     
-    if (!PyArg_ParseTuple(args, "s", &inet_addr)){
+    if(!PyString_Check(inet_addr)){
+        PyErr_BadArgument();
         return NULL;
     }
-    
-    PyObject* tmp;
     
     #if PY_MAJOR_VERSION >= 3
         tmp = PyUnicode_AsUTF8String(self->name);
@@ -307,12 +307,13 @@ static PyObject * Iface_set_inet_addr(Iface *self, PyObject *args)
     
     ifa.name = PyString_AsString(tmp);
     
-    if(set_inet_addr(&ifa, inet_addr) != 0){
-        PyErr_SetString(pynicIfaceError, "Permision denied.");
-        return NULL;
+    result = set_inet_addr(&ifa, PyString_AsString(inet_addr));
+    
+    if(result == EPERM){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }else if(result == -1){
+        PyErr_SetString(pynicIfaceError, "Invalid address");
     }
-    
-    
     
     #if PY_MAJOR_VERSION >= 3
         /*
@@ -320,6 +321,10 @@ static PyObject * Iface_set_inet_addr(Iface *self, PyObject *args)
          */
         Py_DECREF(tmp);
     #endif
+    
+    if(result != 0){
+        return NULL;
+    }
     
     Py_RETURN_TRUE;
 }
@@ -364,7 +369,7 @@ static PyMethodDef Iface_methods[] = {
      "Return a Iface object with all its information."},
     {"update_tx_rx",  (PyCFunction)Iface_update_tx_rx, METH_NOARGS, 
      "Update NIC's TX/RX information."},
-    {"set_inet_addr",  (PyCFunction)Iface_set_inet_addr, METH_VARARGS, 
+    {"set_inet_addr",  (PyCFunction)Iface_set_inet_addr, 0, 
      "Set a new IPv4 Address to the NIC."},
     {NULL}  /* Sentinel */
 };
