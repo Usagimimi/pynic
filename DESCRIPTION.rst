@@ -26,8 +26,8 @@ Installation
 Support
 =======
 
-Currently, this project just supports Python 2.7 and Linux systems. Soon, 
-it should support Python 3.4.
+This project should support Python 2.x and 3.x in every Linux. However, 
+it was tested only on Python 2.7 and 3.4.
 
 What's new
 ===========
@@ -35,3 +35,4 @@ What's new
 - Added repr e str functions
 - Fixed some bugs
 - Increased reliability
+- Added functions to change 
