@@ -47,11 +47,11 @@ void init_iface(struct iface *ifa);
 int get_info_interface(struct iface* ifa, const char *name_iface);
 int get_list_interfaces(char *** list_ifaces);
 char * get_mac(const char *name_iface);
-int set_inet_addr(struct iface *ifa, const char *inet_addr);
-int set_hw_addr(struct iface *ifa, const char *hw_addr);
-int set_mask_addr(struct iface *ifa, const char *mask_addr);
 int set_broad_addr(struct iface *ifa, const char *broad_addr);
 int set_flags(struct iface *ifa, int flags);
+int set_hw_addr(struct iface *ifa, const char *hw_addr);
+int set_inet_addr(struct iface *ifa, const char *inet_addr);
+int set_inet_mask(struct iface *ifa, const char *inet_mask);
 int update_tx_rx(struct iface* ifa);
 
 #endif

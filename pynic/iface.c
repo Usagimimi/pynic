@@ -160,7 +160,7 @@ char * get_mac(const char *name_iface){
     return ret;
 }
 
-int set_inet_addr(struct iface *ifa, const char *inet_addr){
+int set_broad_addr(struct iface *ifa, const char *broad_addr){
     struct ifreq ifr;
     struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
     int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
@@ -169,16 +169,34 @@ int set_inet_addr(struct iface *ifa, const char *inet_addr){
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_addr.sa_family = AF_INET;
     
-    if(inet_pton(AF_INET, inet_addr, &addr->sin_addr) == 0){
-        /*
-         * It is a invalid IPv4 address
-         */
+    if(inet_pton(AF_INET, broad_addr, &addr->sin_addr) == 0){
         result = -1;
     }
     
-    if(result == 0 && ioctl(fd, SIOCSIFADDR, &ifr) == -1){
+    if(result == 0 && ioctl(fd, SIOCSIFBRDADDR, &ifr) == -1){
         result = errno;
-        printf("%s\n", strerror(errno));
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
+}
+
+int set_flags(struct iface *ifa, int flags){
+    struct ifreq ifr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    ifr.ifr_flags |= flags;
+    if(ioctl(fd, SIOCSIFFLAGS, &ifr) == -1){
+        return errno;
     }
     
     if(result == 0){
@@ -214,20 +232,22 @@ int set_hw_addr(struct iface *ifa, const char *hw_addr){
     return result;
 }
 
-int set_mask_addr(struct iface *ifa, const char *mask_addr){
+int set_inet_addr(struct iface *ifa, const char *inet_addr){
     struct ifreq ifr;
     struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
     int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
     int result = 0;
-
+    
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_addr.sa_family = AF_INET;
-    
-    if(inet_pton(AF_INET, mask_addr, &addr->sin_addr) == 0){
+    if(inet_pton(AF_INET, inet_addr, &addr->sin_addr) == 0){
+        /*
+         * It is a invalid IPv4 address
+         */
         result = -1;
     }
     
-    if(ioctl(fd, SIOCSIFNETMASK, &ifr) == -1){
+    if(result == 0 && ioctl(fd, SIOCSIFADDR, &ifr) == -1){
         result = errno;
     }
     
@@ -240,7 +260,7 @@ int set_mask_addr(struct iface *ifa, const char *mask_addr){
     return result;
 }
 
-int set_broad_addr(struct iface *ifa, const char *broad_addr){
+int set_inet_mask(struct iface *ifa, const char *inet_mask){
     struct ifreq ifr;
     struct sockaddr_in* addr = (struct sockaddr_in*)&ifr.ifr_addr;
     int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
@@ -249,34 +269,15 @@ int set_broad_addr(struct iface *ifa, const char *broad_addr){
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_addr.sa_family = AF_INET;
     
-    if(inet_pton(AF_INET, broad_addr, &addr->sin_addr) == 0){
+    if(inet_pton(AF_INET, inet_mask, &addr->sin_addr) == 0){
+        /*
+         * It is a invalid IPv4 address
+         */
         result = -1;
     }
     
-    if(ioctl(fd, SIOCSIFBRDADDR, &ifr) == -1){
+    if(result == 0 && ioctl(fd, SIOCSIFNETMASK, &ifr) == -1){
         result = errno;
-    }
-    
-    if(result == 0){
-        get_info_interface(ifa, ifa->name);
-    }
-    
-    close(fd);
-    
-    return result;
-}
-
-int set_flags(struct iface *ifa, int flags){
-    struct ifreq ifr;
-    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
-    int result = 0;
-
-    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
-    ifr.ifr_addr.sa_family = AF_INET;
-    
-    ifr.ifr_flags |= flags;
-    if(ioctl(fd, SIOCSIFFLAGS, &ifr) == -1){
-        return errno;
     }
     
     if(result == 0){

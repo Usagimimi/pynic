@@ -7,7 +7,7 @@
     
     #define PyString_Check(obj) PyUnicode_Check(obj)
     #define PyString_FromString(obj) PyUnicode_FromString(obj)
-    #define PyString_AsString(obj) PyBytes_AsString(obj)
+    #define PyString_AsString(obj) PyUnicode_AsUTF8(obj)
     #define PyInt_FromLong(obj) PyLong_FromLong(obj)
 #else
     #define MOD_INIT(name) init##name(void)
