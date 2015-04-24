@@ -64,7 +64,8 @@ Attributes
 Methods
 =======
 
-::    
+::
+    
     set_broad_addr(String)              -   Set a new IPv4 Broadcast Address to the NIC (You must have root permission)
     set_inet_addr(String)               -   Set a new IPv4 Address to the NIC (You must have root permission)
     set_inet_mask(String)               -   Set a new IPv4 Mask Address to the NIC (You must have root permission)
@@ -74,4 +75,5 @@ Class Methods
 =============
 
 ::    
+
     Iface.get_interface(String)         -   It return an Iface object with all information about it
