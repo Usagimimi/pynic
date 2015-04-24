@@ -293,7 +293,7 @@ Iface_set_broad_addr(Iface *self, PyObject *broad_addr)
     int result;
     PyObject* tmp;
     
-    if(!PyString_Check(inet_addr)){
+    if(!PyString_Check(broad_addr)){
         PyErr_BadArgument();
         return NULL;
     }
