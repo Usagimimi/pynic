@@ -1,33 +1,38 @@
-# pyNIC
+pyNIC
+=====
+
 A Python interface to get Network Interface Cards(NIC) information on Linux.
 
-## Dependencies
-
+Dependencies
+============
 You must install the Python headers.
 
 On Debian and Ubuntu:
 
     $ sudo apt-get install python-dev
 
-## Installation
-
+Installation
+============
     sudo python setup.py install
 
-## Usage
-
+Usage
+=====
     import pynic
 
 You can see some examples in examples directory.
 
-## Functions
-
+Functions
+=========
+    
     get_list_interfaces()               -   It lists all available interfaces
 
-## Iface class
+Iface class
+===========
 
 This class store all necessary information about the interfaces.
 
-### Attributes
+Attributes
+==========
 
     String  name                        -   Interface's name
     String  inet_addr                   -   Interface's IPv4 address
@@ -44,13 +49,15 @@ This class store all necessary information about the interfaces.
     Integer tx_packets                  -   Amount of packets that the interface transmitted
     Integer rx_packets                  -   Amount of packets that the interface received
 
-### Methods
-
+Methods
+=======
+    
     set_broad_addr(String)              -   Set a new IPv4 Broadcast Address to the NIC (You must have root permission)
     set_inet_addr(String)               -   Set a new IPv4 Address to the NIC (You must have root permission)
     set_inet_mask(String)               -   Set a new IPv4 Mask Address to the NIC (You must have root permission)
     update_tx_rx()                      -   Update NIC's TX/RX information (bytes and packets)
 
-### Class Methods
-
+Class Methods
+=============
+    
     Iface.get_interface(String)         -   It return an Iface object with all information about it
