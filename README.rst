@@ -9,21 +9,31 @@ You must install the Python headers.
 
 On Debian and Ubuntu:
 
+::
+
     $ sudo apt-get install python-dev
 
 Installation
 ============
+
+::
+
     sudo python setup.py install
 
 Usage
 =====
+
+::
+
     import pynic
 
 You can see some examples in examples directory.
 
 Functions
 =========
-    
+
+::    
+
     get_list_interfaces()               -   It lists all available interfaces
 
 Iface class
@@ -33,6 +43,8 @@ This class store all necessary information about the interfaces.
 
 Attributes
 ==========
+
+::
 
     String  name                        -   Interface's name
     String  inet_addr                   -   Interface's IPv4 address
@@ -51,7 +63,8 @@ Attributes
 
 Methods
 =======
-    
+
+::    
     set_broad_addr(String)              -   Set a new IPv4 Broadcast Address to the NIC (You must have root permission)
     set_inet_addr(String)               -   Set a new IPv4 Address to the NIC (You must have root permission)
     set_inet_mask(String)               -   Set a new IPv4 Mask Address to the NIC (You must have root permission)
@@ -59,5 +72,6 @@ Methods
 
 Class Methods
 =============
-    
+
+::    
     Iface.get_interface(String)         -   It return an Iface object with all information about it
