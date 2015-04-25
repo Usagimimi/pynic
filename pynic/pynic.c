@@ -57,69 +57,69 @@ Iface_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
         self->name = PyString_FromString("");
         if (self->name == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->inet_addr = PyString_FromString("");
         if (self->inet_addr == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->inet6_addr = PyString_FromString("");
         if (self->inet6_addr == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->hw_addr = PyString_FromString("");
         if (self->hw_addr == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->broad_addr = PyString_FromString("");
         if (self->broad_addr == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->inet_mask = PyString_FromString("");
         if (self->inet_mask == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->inet6_mask = PyString_FromString("");
         if (self->inet6_mask == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->running = PyBool_FromLong(0);
         if (self->running == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->updown = PyBool_FromLong(0);
         if (self->updown == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->flags = 0;
         
         self->tx_bytes = PyInt_FromLong(0);
         if (self->tx_bytes == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->rx_bytes = PyInt_FromLong(0);
         if (self->rx_bytes == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->tx_packets = PyInt_FromLong(0);
         if (self->tx_packets == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
         self->rx_packets = PyInt_FromLong(0);
         if (self->rx_packets == NULL){
             Py_DECREF(self);
-            return NULL;
+            Py_RETURN_NONE;
         }
     }
 
@@ -257,12 +257,12 @@ Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds)
     Iface *self;
     
     if (!PyArg_ParseTuple(args, "s", &iface_name)){
-        return NULL;
+        Py_RETURN_NONE;
     }
     
     if(get_info_interface(&ifa, iface_name)){
         PyErr_SetString(pynicIfaceError, "There is no NIC with this name.");
-        return NULL;
+        Py_RETURN_NONE;
     }
     
     self = (Iface*) Iface_new(&IfaceType, args, kwds);
@@ -295,7 +295,7 @@ Iface_set_broad_addr(Iface *self, PyObject *broad_addr)
     
     if(!PyString_Check(broad_addr)){
         PyErr_BadArgument();
-        return NULL;
+        Py_RETURN_NONE;
     }
     
     tmp = self->name;
@@ -313,7 +313,7 @@ Iface_set_broad_addr(Iface *self, PyObject *broad_addr)
     
     
     if(result != 0){
-        return NULL;
+        Py_RETURN_NONE;
     }else{
         Py_DECREF(self->broad_addr);
         self->broad_addr = PyString_FromString(PyString_AsString(broad_addr));
@@ -331,7 +331,7 @@ Iface_set_inet_addr(Iface *self, PyObject *inet_addr)
     
     if(!PyString_Check(inet_addr)){
         PyErr_BadArgument();
-        return NULL;
+        Py_RETURN_NONE;
     }
     
     tmp = self->name;
@@ -349,7 +349,7 @@ Iface_set_inet_addr(Iface *self, PyObject *inet_addr)
     
     
     if(result != 0){
-        return NULL;
+        Py_RETURN_NONE;
     }else{
         Py_DECREF(self->inet_addr);
         self->inet_addr = PyString_FromString(PyString_AsString(inet_addr));
@@ -367,7 +367,7 @@ Iface_set_inet_mask(Iface *self, PyObject *inet_mask)
     
     if(!PyString_Check(inet_mask)){
         PyErr_BadArgument();
-        return NULL;
+        Py_RETURN_NONE;
     }
     
     tmp = self->name;
@@ -400,11 +400,7 @@ Iface_update_tx_rx(Iface *self)
     struct iface ifa;
     PyObject* tmp;
     
-    #if PY_MAJOR_VERSION >= 3
-        tmp = PyUnicode_AsUTF8String(self->name);
-    #else
-        tmp = self->name;
-    #endif
+    tmp = self->name;
     
     init_iface(&ifa);
     
@@ -414,13 +410,6 @@ Iface_update_tx_rx(Iface *self)
     self->rx_bytes = PyInt_FromLong(ifa.rx_bytes);
     self->tx_packets = PyInt_FromLong(ifa.tx_packets);
     self->rx_packets = PyInt_FromLong(ifa.rx_packets);
-    
-    #if PY_MAJOR_VERSION >= 3
-        /*
-         * Dereferences Unicode objected created for tmp variable.
-         */
-        Py_DECREF(tmp);
-    #endif
     
     Py_RETURN_TRUE;
 }
@@ -450,52 +439,33 @@ static PyMethodDef Iface_methods[] = {
 static PyObject *
 Iface_repr(Iface *self)
 {
-    PyObject * tmp;
     char *name;
+    
     if(PyString_Check(self->name)){
-        #if PY_MAJOR_VERSION >= 3
-            tmp = PyUnicode_AsUTF8String(self->name);
-        #else
-            tmp = self->name;
-        #endif
+        name = PyString_AsString(self->name);
 
-        name = PyString_AsString(tmp);
-        
-        #if PY_MAJOR_VERSION >= 3
-            Py_DECREF(tmp);
-        #endif
-        
         return PyString_FromString(name);
     }
     
     PyErr_SetString(pynicIfaceError, "Object's name is not a string object.");
-    return NULL;
+    
+    Py_RETURN_NONE;
 }
 
 static PyObject *
 Iface_str(Iface *self)
 { 
-    PyObject * tmp;
     char *name;
     
     if(PyString_Check(self->name)){
-        #if PY_MAJOR_VERSION >= 3
-            tmp = PyUnicode_AsUTF8String(self->name);
-        #else
-            tmp = self->name;
-        #endif
+        name = PyString_AsString(self->name);
 
-        name = PyString_AsString(tmp);
-        
-        #if PY_MAJOR_VERSION >= 3
-            Py_DECREF(tmp);
-        #endif
-        
         return PyString_FromString(name);
     }
     
     PyErr_SetString(pynicIfaceError, "Object's name is not a string object.");
-    return NULL;
+    
+    Py_RETURN_NONE;
 }
 
 /*
