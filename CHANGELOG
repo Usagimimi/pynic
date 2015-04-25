@@ -1,6 +1,10 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - [Unreleased]
+### Fixed
+- Fixed problems with repr and print functions on Python 3.
+
 ## [0.4] - 2015-04-23
 ### Fixed
 - Fixed problem with header files in distribution package
