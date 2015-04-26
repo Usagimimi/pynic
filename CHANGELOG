@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - It was added getter functions to fill the class properties' requirements
 - It was added more error checking
+- Exported constants, e.g., SIOCGIFFLAGS and SIOCSIFADDR.
 
 
 ## [0.4] - 2015-04-23

@@ -36,6 +36,36 @@ Functions
 
     get_list_interfaces()               -   It lists all available interfaces
 
+Constants
+=========
+
+Many constants from netdevice were exported to this module.
+You can check the documentation on http://man7.org/linux/man-pages/man7/netdevice.7.html
+
+Currently, the constants which you are able to use are:
+
+::
+
+    IFF_UP                              -   Interface is running.
+    IFF_BROADCAST                       -   Valid broadcast address set.
+    IFF_DEBUG                           -   Internal debugging flag.
+    IFF_LOOPBACK                        -   Interface is a loopback interface.
+    IFF_POINTOPOINT                     -   Interface is a point-to-point link.
+    IFF_RUNNING                         -   Resources allocated.
+    IFF_NOARP                           -   No arp protocol, L2 destination address not set.
+    IFF_PROMISC                         -   Interface is in promiscuous mode.
+    IFF_NOTRAILERS                      -   Avoid use of trailers.
+    IFF_ALLMULTI                        -   Receive all multicast packets.
+    IFF_MASTER                          -   Master of a load balancing bundle.
+    IFF_SLAVE                           -   Slave of a load balancing bundle.
+    IFF_MULTICAST                       -   Supports multicast
+    IFF_PORTSEL                         -   Is able to select media type via ifmap.
+    IFF_AUTOMEDIA                       -   Auto media selection active.
+    IFF_DYNAMIC                         -   The addresses are lost when the interface goes down.
+    IFF_LOWER_UP                        -   Driver signals L1 up (since Linux 2.6.17)
+    IFF_DORMANT                         -   Driver signals dormant (since Linux 2.6.17)
+    IFF_ECHO                            -   Echo sent packets (since Linux 2.6.25)
+
 Iface class
 ===========
 
