@@ -6,6 +6,7 @@
 #
 # This is a sample code to pyIface, which lists NICs on computer and 
 # show information about them.
+
 import pynic
 
 list_interfaces = pynic.get_list_interfaces()

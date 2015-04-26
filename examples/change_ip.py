@@ -4,8 +4,8 @@
 # E-mail: alfredocdmiranda@gmail.com
 # Date: 04/24/2015
 #
-# This is a sample code to pyIface, which lists NICs on computer and 
-# show information about them.
+# This is a sample code to pyNIC, which lists NICs on computer and 
+# ask a new IPv4 Address to be set. You must have root permission.
 
 import pynic
 

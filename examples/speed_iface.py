@@ -6,6 +6,7 @@
 #
 # This is a sample code to pyIface, which calculate an instant speed on 
 # your selected interface during a certaing time.
+
 import time
 import pynic
 
