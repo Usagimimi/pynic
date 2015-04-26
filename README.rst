@@ -27,7 +27,7 @@ Usage
 
     import pynic
 
-You can see some examples in examples directory.
+You can see an example at the end of this page.
 
 Functions
 =========
@@ -73,7 +73,7 @@ Class Methods
 
 ::    
 
-    Iface.get_interface(String)         -   It return an Iface object with all information about it
+    Iface.get_interface(String)         -   It returns an Iface object with all information about it
 
 Examples
 ========
