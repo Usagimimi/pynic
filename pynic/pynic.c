@@ -648,5 +648,75 @@ MOD_INIT(pynic)
     Py_INCREF(&IfaceType);
     PyModule_AddObject(module, "Iface", (PyObject *)&IfaceType);
     
+    /* 
+     * Exporting constants 
+     * You can check documentation on 
+     * http://man7.org/linux/man-pages/man7/netdevice.7.html
+     */
+    
+    /* 
+     * TODO These flags should be revised about if they are really needed
+     * on this module
+     */
+    /*PyModule_AddIntConstant(module, "SIOCGIFNAME", SIOCGIFNAME);
+    PyModule_AddIntConstant(module, "SIOCGIFINDEX", SIOCGIFINDEX);
+    PyModule_AddIntConstant(module, "SIOCGIFFLAGS", SIOCGIFFLAGS);
+    PyModule_AddIntConstant(module, "SIOCSIFFLAGS", SIOCSIFFLAGS);
+    PyModule_AddIntConstant(module, "SIOCGIFPFLAGS", SIOCGIFPFLAGS);
+    PyModule_AddIntConstant(module, "SIOCSIFPFLAGS", SIOCSIFPFLAGS);
+    PyModule_AddIntConstant(module, "SIOCGIFADDR", SIOCGIFADDR);
+    PyModule_AddIntConstant(module, "SIOCSIFADDR", SIOCSIFADDR);
+    PyModule_AddIntConstant(module, "SIOCGIFDSTADDR", SIOCGIFDSTADDR);
+    PyModule_AddIntConstant(module, "SIOCSIFDSTADDR", SIOCSIFDSTADDR);
+    PyModule_AddIntConstant(module, "SIOCGIFBRDADDR", SIOCGIFBRDADDR);
+    PyModule_AddIntConstant(module, "SIOCSIFBRDADDR", SIOCSIFBRDADDR);
+    PyModule_AddIntConstant(module, "SIOCGIFNETMASK", SIOCGIFNETMASK);
+    PyModule_AddIntConstant(module, "SIOCSIFNETMASK", SIOCSIFNETMASK);
+    PyModule_AddIntConstant(module, "SIOCGIFMETRIC", SIOCSIFMETRIC);
+    PyModule_AddIntConstant(module, "SIOCGIFMTU", SIOCGIFMTU);
+    PyModule_AddIntConstant(module, "SIOCSIFMTU", SIOCSIFMTU);
+    PyModule_AddIntConstant(module, "SIOCGIFHWADDR", SIOCGIFHWADDR);
+    PyModule_AddIntConstant(module, "SIOCSIFHWADDR", SIOCSIFHWADDR);
+    PyModule_AddIntConstant(module, "SIOCSIFHWBROADCAST", SIOCSIFHWBROADCAST);
+    PyModule_AddIntConstant(module, "SIOCGIFMAP", SIOCGIFMAP);
+    PyModule_AddIntConstant(module, "SIOCSIFMAP", SIOCSIFMAP);
+    PyModule_AddIntConstant(module, "SIOCADDMULTI", SIOCADDMULTI);
+    PyModule_AddIntConstant(module, "SIOCDELMULTI", SIOCDELMULTI);
+    PyModule_AddIntConstant(module, "SIOCGIFTXQLEN", SIOCGIFTXQLEN);
+    PyModule_AddIntConstant(module, "SIOCSIFTXQLEN", SIOCSIFTXQLEN);
+    PyModule_AddIntConstant(module, "SIOCSIFNAME", SIOCSIFNAME);
+    PyModule_AddIntConstant(module, "SIOCGIFFLAGS", SIOCGIFFLAGS);
+    PyModule_AddIntConstant(module, "SIOCGIFCONF", SIOCGIFCONF);*/
+    
+    PyModule_AddIntConstant(module, "IFF_UP", IFF_UP);
+    PyModule_AddIntConstant(module, "IFF_BROADCAST", IFF_BROADCAST);
+    PyModule_AddIntConstant(module, "IFF_DEBUG", IFF_DEBUG);
+    PyModule_AddIntConstant(module, "IFF_LOOPBACK", IFF_LOOPBACK);
+    PyModule_AddIntConstant(module, "IFF_POINTOPOINT", IFF_POINTOPOINT);
+    PyModule_AddIntConstant(module, "IFF_RUNNING", IFF_RUNNING);
+    PyModule_AddIntConstant(module, "IFF_NOARP", IFF_NOARP);
+    PyModule_AddIntConstant(module, "IFF_PROMISC", IFF_PROMISC);
+    PyModule_AddIntConstant(module, "IFF_NOTRAILERS", IFF_NOTRAILERS);
+    PyModule_AddIntConstant(module, "IFF_ALLMULTI", IFF_ALLMULTI);
+    PyModule_AddIntConstant(module, "IFF_MASTER", IFF_MASTER);
+    PyModule_AddIntConstant(module, "IFF_SLAVE", IFF_SLAVE);
+    PyModule_AddIntConstant(module, "IFF_MULTICAST", IFF_MULTICAST);
+    PyModule_AddIntConstant(module, "IFF_PORTSEL", IFF_PORTSEL);
+    PyModule_AddIntConstant(module, "IFF_AUTOMEDIA", IFF_AUTOMEDIA);
+    PyModule_AddIntConstant(module, "IFF_DYNAMIC", IFF_DYNAMIC);
+    PyModule_AddIntConstant(module, "IFF_LOWER_UP", IFF_LOWER_UP);
+    PyModule_AddIntConstant(module, "IFF_DORMANT", IFF_DORMANT);
+    PyModule_AddIntConstant(module, "IFF_ECHO", IFF_ECHO);
+    
+    /* TODO These flags must be revised */
+    /*PyModule_AddIntConstant(module, "IFF_802_1Q_VLAN", IFF_802_1Q_VLAN);
+    PyModule_AddIntConstant(module, "IFF_EBRIDGE", IFF_EBRIDGE);
+    PyModule_AddIntConstant(module, "IFF_SLAVE_INACTIVE", IFF_SLAVE_INACTIVE);
+    PyModule_AddIntConstant(module, "IFF_MASTER_8023AD", IFF_MASTER_8023AD);
+    PyModule_AddIntConstant(module, "IFF_MASTER_ALB", IFF_MASTER_ALB);
+    PyModule_AddIntConstant(module, "IFF_BONDING", IFF_BONDING);
+    PyModule_AddIntConstant(module, "IFF_SLAVE_NEEDARP", IFF_SLAVE_NEEDARP);
+    PyModule_AddIntConstant(module, "IFF_ISATAP", IFF_ISATAP);*/
+    
     RETURN_INIT(module);
 }
