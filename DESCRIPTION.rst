@@ -10,7 +10,7 @@ Documentation
 Currently, all documentation can be accessed in project's GitHub page.
 
 Dependencies
-=========
+============
 
 You must install the Python headers.
 
@@ -36,3 +36,9 @@ What's new
 - Fixed some bugs
 - Increased reliability
 - Added functions to change addresses
+
+What's new 0.5
+==============
+- Removed set functions
+- Added getter and setter as class properties
+- Added constants
