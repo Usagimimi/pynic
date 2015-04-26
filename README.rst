@@ -66,9 +66,6 @@ Methods
 
 ::
     
-    set_broad_addr(String)              -   Set a new IPv4 Broadcast Address to the NIC (You must have root permission)
-    set_inet_addr(String)               -   Set a new IPv4 Address to the NIC (You must have root permission)
-    set_inet_mask(String)               -   Set a new IPv4 Mask Address to the NIC (You must have root permission)
     update_tx_rx()                      -   Update NIC's TX/RX information (bytes and packets)
 
 Class Methods
@@ -77,3 +74,18 @@ Class Methods
 ::    
 
     Iface.get_interface(String)         -   It return an Iface object with all information about it
+
+Examples
+========
+
+- Get an interface and set a new IPv4 Address (You must execute as root)
+
+::
+
+    import pynic
+    
+    interface = pynic.Iface.get_interface('eth0')
+    interface.inet_addr = "192.168.0.100"
+    print(interface.inet_addr) #Print the new address
+
+You can see more examples in the example directory.
