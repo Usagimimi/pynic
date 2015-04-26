@@ -7,16 +7,16 @@
 static PyMemberDef Iface_members[] = {
     {"name", T_OBJECT_EX, offsetof(Iface, name), 
         0, "Interface's name"},
-    {"inet_addr", T_OBJECT_EX, offsetof(Iface, inet_addr), 
-        0, "Interface's IPv4 address"},
+    /*{"inet_addr", T_OBJECT_EX, offsetof(Iface, inet_addr), 
+        0, "Interface's IPv4 address"},*/
     {"inet6_addr", T_OBJECT_EX, offsetof(Iface, inet6_addr), 
         0, "Interface's IPv6 address"},
     {"hw_addr", T_OBJECT_EX, offsetof(Iface, hw_addr), 
         0, "Interface's MAC address"},
-    {"broad_addr", T_OBJECT_EX, offsetof(Iface, broad_addr), 
-        0, "Interface's Broadcast address"},
-    {"inet_mask", T_OBJECT_EX, offsetof(Iface, inet_mask), 
-        0, "Interface's Network Mask v4 address"},
+    /*{"broad_addr", T_OBJECT_EX, offsetof(Iface, broad_addr), 
+        0, "Interface's Broadcast address"},*/
+    /*{"inet_mask", T_OBJECT_EX, offsetof(Iface, inet_mask), 
+        0, "Interface's Network Mask v4 address"},*/
     {"inet6_mask", T_OBJECT_EX, offsetof(Iface, inet6_mask), 
         0, "Interface's Network Mask v6 address"},
     {"running", T_OBJECT_EX, offsetof(Iface, running), 
@@ -44,6 +44,18 @@ static void
 Iface_dealloc(Iface* self)
 {
     Py_XDECREF(self->name);
+    Py_XDECREF(self->inet_addr);
+    Py_XDECREF(self->inet6_addr);
+    Py_XDECREF(self->inet_mask);
+    Py_XDECREF(self->inet6_mask);
+    Py_XDECREF(self->broad_addr);
+    Py_XDECREF(self->hw_addr);
+    Py_XDECREF(self->running);
+    Py_XDECREF(self->updown);
+    Py_XDECREF(self->tx_bytes);
+    Py_XDECREF(self->rx_bytes);
+    Py_XDECREF(self->tx_packets);
+    Py_XDECREF(self->rx_packets);
     Py_TYPE(self)->tp_free((PyObject*)self);
 }
 
@@ -286,114 +298,6 @@ Iface_get_interface(PyObject *cls, PyObject *args, PyObject *kwds)
     return (PyObject*)self;
  }
 
-static PyObject * 
-Iface_set_broad_addr(Iface *self, PyObject *broad_addr)
-{
-    struct iface ifa;
-    int result;
-    PyObject* tmp;
-    
-    if(!PyString_Check(broad_addr)){
-        PyErr_BadArgument();
-        Py_RETURN_NONE;
-    }
-    
-    tmp = self->name;
-    
-    init_iface(&ifa);
-    
-    ifa.name = PyString_AsString(tmp);
-    result = set_broad_addr(&ifa, PyString_AsString(broad_addr));
-    
-    if(result == EPERM){
-        PyErr_SetString(pynicIfaceError, strerror(result));
-    }else if(result == -1){
-        PyErr_SetString(pynicIfaceError, "Invalid address");
-    }
-    
-    
-    if(result != 0){
-        Py_RETURN_NONE;
-    }else{
-        Py_DECREF(self->broad_addr);
-        self->broad_addr = PyString_FromString(PyString_AsString(broad_addr));
-        
-        Py_RETURN_TRUE;
-    }
-}
-
-static PyObject * 
-Iface_set_inet_addr(Iface *self, PyObject *inet_addr)
-{
-    struct iface ifa;
-    int result;
-    PyObject* tmp;
-    
-    if(!PyString_Check(inet_addr)){
-        PyErr_BadArgument();
-        Py_RETURN_NONE;
-    }
-    
-    tmp = self->name;
-    
-    init_iface(&ifa);
-    
-    ifa.name = PyString_AsString(tmp);
-    result = set_inet_addr(&ifa, PyString_AsString(inet_addr));
-    
-    if(result == EPERM){
-        PyErr_SetString(pynicIfaceError, strerror(result));
-    }else if(result == -1){
-        PyErr_SetString(pynicIfaceError, "Invalid address");
-    }
-    
-    
-    if(result != 0){
-        Py_RETURN_NONE;
-    }else{
-        Py_DECREF(self->inet_addr);
-        self->inet_addr = PyString_FromString(PyString_AsString(inet_addr));
-        
-        Py_RETURN_TRUE;
-    }
-}
-
-static PyObject * 
-Iface_set_inet_mask(Iface *self, PyObject *inet_mask)
-{
-    struct iface ifa;
-    int result;
-    PyObject* tmp;
-    
-    if(!PyString_Check(inet_mask)){
-        PyErr_BadArgument();
-        Py_RETURN_NONE;
-    }
-    
-    tmp = self->name;
-    
-    init_iface(&ifa);
-    
-    ifa.name = PyString_AsString(tmp);
-    
-    result = set_inet_mask(&ifa, PyString_AsString(inet_mask));
-    
-    if(result == EPERM){
-        PyErr_SetString(pynicIfaceError, strerror(result));
-    }else if(result == -1){
-        PyErr_SetString(pynicIfaceError, "Invalid address");
-    }
-    
-    if(result != 0){
-        return NULL;
-    }else{
-        Py_DECREF(self->inet_mask);
-        self->inet_mask = PyString_FromString(PyString_AsString(inet_mask));
-        
-        Py_RETURN_TRUE;
-    }
-}
-
 static PyObject *
 Iface_update_tx_rx(Iface *self)
 {
@@ -414,6 +318,148 @@ Iface_update_tx_rx(Iface *self)
     Py_RETURN_TRUE;
 }
 
+/* Getters */
+
+static PyObject * 
+Iface_get_broad_addr(Iface *self, void *closure)
+{
+    Py_INCREF(self->broad_addr);
+    return self->broad_addr;
+}
+
+static PyObject * 
+Iface_get_inet_addr(Iface *self, void *closure)
+{
+    Py_INCREF(self->inet_addr);
+    return self->inet_addr;
+}
+
+static PyObject * 
+Iface_get_inet_mask(Iface *self, void *closure)
+{
+    Py_INCREF(self->inet_mask);
+    return self->inet_mask;
+}
+
+/* Setters */
+
+static int
+Iface_set_broad_addr(Iface *self, PyObject *value, void *closure)
+{
+    struct iface ifa;
+    int result;
+    
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the broad_addr attribute");
+        return -1;
+    }
+      
+    if(!PyString_Check(value)){
+        PyErr_BadArgument();
+        return -1;
+    }
+        
+    init_iface(&ifa);
+    
+    ifa.name = PyString_AsString(self->name);
+    result = set_broad_addr(&ifa, PyString_AsString(value));
+    
+    if(result == EPERM){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }else if(result == -1){
+        PyErr_SetString(pynicIfaceError, "Invalid address");
+    }
+    
+    
+    if(result != 0){
+        return -1;
+    }else{
+        Py_DECREF(self->broad_addr);
+        self->broad_addr = PyString_FromString(PyString_AsString(value));
+        
+        return 0;
+    }
+}
+
+static int
+Iface_set_inet_addr(Iface *self, PyObject *value, void *closure)
+{
+    /* TODO Update all possible variables when happens a change */
+    
+    struct iface ifa;
+    int result;
+    
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the inet_addr attribute");
+        return -1;
+    }
+    
+    if(!PyString_Check(value)){
+        PyErr_BadArgument();
+        return -1;
+    }
+       
+    init_iface(&ifa);
+    
+    ifa.name = PyString_AsString(self->name);
+    result = set_inet_addr(&ifa, PyString_AsString(value));
+    
+    if(result == EPERM){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }else if(result == -1){
+        PyErr_SetString(pynicIfaceError, "Invalid address");
+    }
+    
+    
+    if(result != 0){
+        return -1;
+    }else{
+        Py_DECREF(self->inet_addr);
+        self->inet_addr = PyString_FromString(PyString_AsString(value));
+
+        return 0;
+    }
+}
+
+static int
+Iface_set_inet_mask(Iface *self, PyObject *value, void *closure)
+{
+    struct iface ifa;
+    int result;
+    
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the inet_mask attribute");
+        return -1;
+    }
+    
+    if(!PyString_Check(value)){
+        PyErr_BadArgument();
+        
+        return -1;
+    }
+    
+    init_iface(&ifa);
+    
+    ifa.name = PyString_AsString(self->name);
+    
+    result = set_inet_mask(&ifa, PyString_AsString(value));
+    
+    if(result == EPERM){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }else if(result == -1){
+        PyErr_SetString(pynicIfaceError, "Invalid address");
+    }
+    
+    if(result != 0){
+        return -1;
+    }else{
+        Py_DECREF(self->inet_mask);
+        self->inet_mask = PyString_FromString(PyString_AsString(value));
+
+        return 0;
+    }
+}
+
 /*
  * Methods Table
  */
@@ -423,12 +469,6 @@ static PyMethodDef Iface_methods[] = {
      "Return a Iface object with all its information."},
     {"update_tx_rx",  (PyCFunction)Iface_update_tx_rx, METH_NOARGS, 
      "Update NIC's TX/RX information."},
-    {"set_broad_addr",  (PyCFunction)Iface_set_broad_addr, METH_O, 
-     "Set a new IPv4 Broadcast Address to the NIC."},
-    {"set_inet_addr",  (PyCFunction)Iface_set_inet_addr, METH_O, 
-     "Set a new IPv4 Address to the NIC."},
-    {"set_inet_mask",  (PyCFunction)Iface_set_inet_mask, METH_O, 
-     "Set a new IPv4 Mask Address to the NIC."},
     {NULL}  /* Sentinel */
 };
 
@@ -468,6 +508,16 @@ Iface_str(Iface *self)
     Py_RETURN_NONE;
 }
 
+static PyGetSetDef Iface_getseters[] = {
+    {"inet_addr", (getter)Iface_get_inet_addr, (setter)Iface_set_inet_addr,
+     "Interface's IPv4 address", NULL},
+    {"broad_addr", (getter)Iface_get_broad_addr, (setter)Iface_set_broad_addr,
+     "Interface's Broadcast address", NULL},
+    {"inet_mask", (getter)Iface_get_inet_mask, (setter)Iface_set_inet_mask,
+     "Interface's Network Mask v4 address", NULL},
+    {NULL}  /* Sentinel */
+};
+
 /*
  * Type definition
  */
@@ -502,7 +552,7 @@ static PyTypeObject IfaceType = {
     0,		                                    /* tp_iternext */
     Iface_methods,                              /* tp_methods */
     Iface_members,                              /* tp_members */
-    0,                                          /* tp_getset */
+    Iface_getseters,                                          /* tp_getset */
     0,                                          /* tp_base */
     0,                                          /* tp_dict */
     0,                                          /* tp_descr_get */

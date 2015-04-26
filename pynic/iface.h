@@ -42,6 +42,12 @@ struct iface{
     unsigned int rx_packets;
 };
 
+struct in6_ifreq {
+    struct in6_addr addr;
+    uint32_t        prefixlen;
+    unsigned int    ifindex;
+};
+
 void free_iface(struct iface *ifa);
 void init_iface(struct iface *ifa);
 int get_info_interface(struct iface* ifa, const char *name_iface);
