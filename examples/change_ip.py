@@ -17,7 +17,6 @@ for pos, i in enumerate(list_interfaces):
 opt = int(input("Choose the interface: "))
 iface = pynic.Iface.get_interface(list_interfaces[opt])
 
-new_addr = input("New IPv4  Address: ")
 print("Last IPv4: {0}".format(iface.inet_addr))
-iface.set_inet_addr(new_addr)
+iface.inet_addr = input("New IPv4  Address: ")
 print("New IPv4: {0}".format(iface.inet_addr))
