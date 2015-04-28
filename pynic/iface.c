@@ -9,7 +9,7 @@ void free_iface(struct iface *ifa){
 
 void init_iface(struct iface *ifa){
     ifa->name = malloc(sizeof(char)*IFNAMSIZ);
-    (ifa->name)[0] = '\0'; 
+    (ifa->name)[0] = '\0';
     ifa->inet_addr = malloc(sizeof(char)*NI_MAXHOST);
     (ifa->inet_addr)[0] = '\0';
     ifa->inet6_addr = malloc(sizeof(char)*NI_MAXHOST);
@@ -74,16 +74,16 @@ int get_info_interface(struct iface* ifa, const char *name_iface){
                 ifa->tx_packets =  stats->tx_packets;
                 ifa->rx_packets =  stats->rx_packets;
             }else if(aux->ifa_addr->sa_family == AF_INET){
-                getnameinfo(aux->ifa_addr, sizeof(struct sockaddr_in), 
+                getnameinfo(aux->ifa_addr, sizeof(struct sockaddr_in),
                             ifa->inet_addr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-                getnameinfo(aux->ifa_netmask, sizeof(struct sockaddr_in), 
+                getnameinfo(aux->ifa_netmask, sizeof(struct sockaddr_in),
                             ifa->inet_mask, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-                getnameinfo(aux->ifa_ifu.ifu_broadaddr, sizeof(struct sockaddr_in), 
+                getnameinfo(aux->ifa_ifu.ifu_broadaddr, sizeof(struct sockaddr_in),
                             ifa->broad_addr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             }else if(aux->ifa_addr->sa_family == AF_INET6){
-                getnameinfo(aux->ifa_addr, sizeof(struct sockaddr_in6), 
+                getnameinfo(aux->ifa_addr, sizeof(struct sockaddr_in6),
                             ifa->inet6_addr, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
-                getnameinfo(aux->ifa_netmask, sizeof(struct sockaddr_in6), 
+                getnameinfo(aux->ifa_netmask, sizeof(struct sockaddr_in6),
                             ifa->inet6_mask, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
             }
         }
@@ -194,7 +194,8 @@ int set_flags(struct iface *ifa, int flags){
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_addr.sa_family = AF_INET;
     
-    ifr.ifr_flags |= flags;
+    //ifr.ifr_flags |= flags;
+    ifr.ifr_flags = flags;
     if(ioctl(fd, SIOCSIFFLAGS, &ifr) == -1){
         return errno;
     }

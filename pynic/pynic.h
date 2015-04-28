@@ -18,7 +18,7 @@ typedef struct{
     PyObject        *inet6_mask;
     PyObject        *running;
     PyObject        *updown;
-    unsigned int    flags;
+    PyObject        *flags;
     PyObject        *tx_bytes;
     PyObject        *rx_bytes;
     PyObject        *tx_packets;
@@ -37,12 +37,18 @@ static PyObject * Iface_get_interface(PyObject *cls, PyObject *args, PyObject *k
 static PyObject * Iface_update_tx_rx(Iface *self);
 /* Getters */
 static PyObject * Iface_get_broad_addr(Iface *self, void *closure);
+static PyObject * Iface_get_flags(Iface *self, void *closure);
 static PyObject * Iface_get_inet_addr(Iface *self, void *closure);
 static PyObject * Iface_get_inet_mask(Iface *self, void *closure);
+static PyObject * Iface_get_running(Iface *self, void *closure);
+static PyObject * Iface_get_updown(Iface *self, void *closure);
 /* Setters */
 static int Iface_set_broad_addr(Iface *self, PyObject *value, void *closure);
+static int Iface_set_flags(Iface *self, PyObject *value, void *closure);
 static int Iface_set_inet_addr(Iface *self, PyObject *value, void *closure);
 static int Iface_set_inet_mask(Iface *self, PyObject *value, void *closure);
+static int Iface_set_running(Iface *self, PyObject *value, void *closure);
+static int Iface_set_updown(Iface *self, PyObject *value, void *closure);
 /* Callback Routines */
 static PyObject * Iface_repr(Iface *self);
 static PyObject * Iface_str(Iface *self);
