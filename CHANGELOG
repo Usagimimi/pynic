@@ -12,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - It was added getter functions to fill the class properties' requirements
 - It was added more error checking
 - Exported constants, e.g., SIOCGIFFLAGS and SIOCSIFADDR.
+- Added getter and setter to flags
+- Added getter and setter to running and updown
 
 
 ## [0.4] - 2015-04-23
