@@ -9,6 +9,12 @@
 
 import pynic
 
+#Compatible code between Python 2.x and 3.x
+try:
+    input = raw_input
+except NameError:
+    pass
+
 list_interfaces = pynic.get_list_interfaces()
 
 for pos, i in enumerate(list_interfaces):
