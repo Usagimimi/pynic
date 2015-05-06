@@ -40,7 +40,15 @@ static PyObject * Iface_get_broad_addr(Iface *self, void *closure);
 static PyObject * Iface_get_flags(Iface *self, void *closure);
 static PyObject * Iface_get_inet_addr(Iface *self, void *closure);
 static PyObject * Iface_get_inet_mask(Iface *self, void *closure);
+static PyObject * Iface_get_inet6_addr(Iface *self, void *closure);
+static PyObject * Iface_get_inet6_mask(Iface *self, void *closure);
+static PyObject * Iface_get_hw_addr(Iface *self, void *closure);
+static PyObject * Iface_get_name(Iface *self, void *closure);
 static PyObject * Iface_get_running(Iface *self, void *closure);
+static PyObject * Iface_get_rx_bytes(Iface *self, void *closure);
+static PyObject * Iface_get_tx_bytes(Iface *self, void *closure);
+static PyObject * Iface_get_rx_packets(Iface *self, void *closure);
+static PyObject * Iface_get_tx_packets(Iface *self, void *closure);
 static PyObject * Iface_get_updown(Iface *self, void *closure);
 /* Setters */
 static int Iface_set_broad_addr(Iface *self, PyObject *value, void *closure);

@@ -5,28 +5,6 @@
  */
 
 static PyMemberDef Iface_members[] = {
-    {"name", T_OBJECT_EX, offsetof(Iface, name),
-        0, "Interface's name"},
-    {"inet6_addr", T_OBJECT_EX, offsetof(Iface, inet6_addr),
-        0, "Interface's IPv6 address"},
-    {"hw_addr", T_OBJECT_EX, offsetof(Iface, hw_addr),
-        0, "Interface's MAC address"},
-    {"inet6_mask", T_OBJECT_EX, offsetof(Iface, inet6_mask),
-        0, "Interface's Network Mask v6 address"},
-    /*{"running", T_OBJECT_EX, offsetof(Iface, running),
-        0, "Indicates if interface is running or not"},*/
-    /*{"updown", T_OBJECT_EX, offsetof(Iface, updown),
-        0, "Indicates if interfaces is Up or Down"},*/
-    /*{"flags", T_INT, offsetof(Iface, flags),
-        0, "Other Interface's flags"},*/
-    {"tx_bytes", T_OBJECT_EX, offsetof(Iface, tx_bytes),
-        0, "Amount of bytes that the interface transmitted"},
-    {"rx_bytes", T_OBJECT_EX, offsetof(Iface, rx_bytes),
-        0, "Amount of bytes that the interface received"},
-    {"tx_packets", T_OBJECT_EX, offsetof(Iface, tx_packets),
-        0, "Amount of packets that the interface transmitted"},
-    {"rx_packets", T_OBJECT_EX, offsetof(Iface, rx_packets),
-        0, "Amount of packets that the interface received"},
     {NULL}
 };
 
@@ -343,11 +321,67 @@ Iface_get_inet_mask(Iface *self, void *closure)
     return self->inet_mask;
 }
 
+static PyObject *
+Iface_get_inet6_addr(Iface *self, void *closure)
+{
+    Py_INCREF(self->inet6_addr);
+    return self->inet6_addr;
+}
+
+static PyObject *
+Iface_get_inet6_mask(Iface *self, void *closure)
+{
+    Py_INCREF(self->inet6_mask);
+    return self->inet6_mask;
+}
+
+static PyObject *
+Iface_get_hw_addr(Iface *self, void *closure)
+{
+    Py_INCREF(self->hw_addr);
+    return self->hw_addr;
+}
+
+static PyObject *
+Iface_get_name(Iface *self, void *closure)
+{
+    Py_INCREF(self->name);
+    return self->name;
+}
+
 static PyObject * 
 Iface_get_running(Iface *self, void *closure)
 {
     Py_INCREF(self->running);
     return self->running;
+}
+
+static PyObject * 
+Iface_get_rx_bytes(Iface *self, void *closure)
+{
+    Py_INCREF(self->rx_bytes);
+    return self->rx_bytes;
+}
+
+static PyObject * 
+Iface_get_tx_bytes(Iface *self, void *closure)
+{
+    Py_INCREF(self->tx_bytes);
+    return self->tx_bytes;
+}
+
+static PyObject * 
+Iface_get_rx_packets(Iface *self, void *closure)
+{
+    Py_INCREF(self->rx_packets);
+    return self->rx_packets;
+}
+
+static PyObject * 
+Iface_get_tx_packets(Iface *self, void *closure)
+{
+    Py_INCREF(self->tx_packets);
+    return self->tx_packets;
 }
 
 static PyObject * 
@@ -664,16 +698,32 @@ Iface_str(Iface *self)
 }
 
 static PyGetSetDef Iface_getseters[] = {
-    {"inet_addr", (getter)Iface_get_inet_addr, (setter)Iface_set_inet_addr,
-     "Interface's IPv4 address", NULL},
     {"broad_addr", (getter)Iface_get_broad_addr, (setter)Iface_set_broad_addr,
      "Interface's Broadcast address", NULL},
-    {"inet_mask", (getter)Iface_get_inet_mask, (setter)Iface_set_inet_mask,
-     "Interface's Network Mask v4 address", NULL},
     {"flags", (getter)Iface_get_flags, (setter)Iface_set_flags,
      "Other Interface's flags", NULL},
+    {"inet_addr", (getter)Iface_get_inet_addr, (setter)Iface_set_inet_addr,
+     "Interface's IPv4 address", NULL},
+    {"inet_mask", (getter)Iface_get_inet_mask, (setter)Iface_set_inet_mask,
+     "Interface's Network Mask v4 address", NULL},
+    {"inet6_addr", (getter)Iface_get_inet6_addr, (setter)NULL,
+     "Interface's IPv6 address", NULL},
+    {"inet6_mask", (getter)Iface_get_inet6_mask, (setter)NULL,
+     "Interface's Network Mask v6 address", NULL},
     {"running", (getter)Iface_get_running, (setter)Iface_set_running,
      "Indicates if interface is running or not", NULL},
+    {"hw_addr", (getter)Iface_get_hw_addr, (setter)NULL,
+     "Interface's MAC address", NULL},
+    {"name", (getter)Iface_get_name, (setter)NULL,
+     "Interface's name", NULL},
+    {"rx_bytes", (getter)Iface_get_rx_bytes, (setter)NULL,
+     "Amount of bytes that the interface received", NULL},
+    {"tx_bytes", (getter)Iface_get_tx_bytes, (setter)NULL,
+     "Amount of bytes that the interface transmitted", NULL},
+    {"rx_packets", (getter)Iface_get_rx_packets, (setter)NULL,
+     "Amount of packets that the interface received", NULL},
+    {"tx_packets", (getter)Iface_get_tx_packets, (setter)NULL,
+     "Amount of packets that the interface transmitted", NULL},
     {"updown", (getter)Iface_get_updown, (setter)Iface_set_updown,
      "Indicates if interfaces is Up or Down", NULL},
     {NULL}  /* Sentinel */
