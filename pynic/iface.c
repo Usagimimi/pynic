@@ -194,7 +194,6 @@ int set_flags(struct iface *ifa, int flags){
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_addr.sa_family = AF_INET;
     
-    //ifr.ifr_flags |= flags;
     ifr.ifr_flags = flags;
     if(ioctl(fd, SIOCSIFFLAGS, &ifr) == -1){
         return errno;
