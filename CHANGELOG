@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 - Fixed problems with repr and print functions on Python 3.
 
 ### Changed
-- Setter functions and some variables were changed to class properties
+- All variables were changed to class properties.
 
 ### Added
 - It was added getter functions to fill the class properties' requirements
@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Exported constants, e.g., SIOCGIFFLAGS and SIOCSIFADDR.
 - Added getter and setter to flags
 - Added getter and setter to running and updown
+- Added getter to all variables (some variables are not able to use setters)
 
 
 ## [0.4] - 2015-04-23
