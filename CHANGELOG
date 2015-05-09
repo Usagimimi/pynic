@@ -1,6 +1,11 @@
 # Change Log
 All notable changes to this project will be documented in this file.
 
+## [Unreleased] - [Unreleased]
+### Added
+- Added setter for name
+- Added hardware address validation
+
 ## [0.5] - 2015-05-06
 ### Fixed
 - Fixed problems with repr and print functions on Python 3.
