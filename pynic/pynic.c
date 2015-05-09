@@ -447,7 +447,7 @@ Iface_set_flags(Iface *self, PyObject *value, void *closure)
         PyErr_BadArgument();
         return -1;
     }
-        
+    
     init_iface(&ifa);
     
     ifa.name = PyString_AsString(self->name);
@@ -468,6 +468,59 @@ Iface_set_flags(Iface *self, PyObject *value, void *closure)
         self->running = PyBool_FromLong(ifa.running);
         self->updown = PyBool_FromLong(ifa.updown);
         
+        return 0;
+    }
+}
+
+static int 
+Iface_set_hw_addr(Iface *self, PyObject *value, void *closure)
+{
+    struct iface ifa;
+    int result;
+    
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the running attribute");
+        return -1;
+    }
+    
+    if(!PyString_Check(value)){
+        PyErr_BadArgument();
+        
+        return -1;
+    }
+    
+    if(PyObject_RichCompareBool(self->updown, Py_True, Py_EQ))
+    {
+        PyErr_SetString(pynicIfaceError, "The interface must be down to complete this action.");
+        
+        return -1;
+    }
+    
+     if(!validate_hw_addr(PyString_AsString(value)))
+    {
+        PyErr_SetString(pynicIfaceError, "Invalid Hardware Address");
+        
+        return -1;
+    }
+    
+    init_iface(&ifa);
+
+    ifa.name = PyString_AsString(self->name);
+    result = SET_HW_ADDR(&ifa, PyString_AsString(value));
+    
+    /* TODO Make better error checking */
+    if(result == EPERM || result == EBUSY){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }else if(result != 0){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }
+    
+    if(result != 0){
+        return -1;
+    }else{
+        Py_DECREF(self->name);
+        self->name = PyString_FromString(PyString_AsString(value));
+
         return 0;
     }
 }
@@ -546,6 +599,50 @@ Iface_set_inet_mask(Iface *self, PyObject *value, void *closure)
     }else{
         Py_DECREF(self->inet_mask);
         self->inet_mask = PyString_FromString(PyString_AsString(value));
+
+        return 0;
+    }
+}
+
+static int 
+Iface_set_name(Iface *self, PyObject *value, void *closure)
+{
+    struct iface ifa;
+    int result;
+    
+    if (value == NULL) {
+        PyErr_SetString(PyExc_TypeError, "Cannot delete the running attribute");
+        return -1;
+    }
+    
+    if(!PyString_Check(value)){
+        PyErr_BadArgument();
+        
+        return -1;
+    }
+    
+    if(PyObject_RichCompareBool(self->updown, Py_True, Py_EQ))
+    {
+        PyErr_SetString(pynicIfaceError, "The interface must be down to complete this action.");
+        
+        return -1;
+    }
+    
+    init_iface(&ifa);
+    
+    ifa.name = PyString_AsString(self->name);
+
+    result = set_name(&ifa, PyString_AsString(value));
+    
+    if(result == EPERM){
+        PyErr_SetString(pynicIfaceError, strerror(result));
+    }
+    
+    if(result != 0){
+        return -1;
+    }else{
+        Py_DECREF(self->name);
+        self->name = PyString_FromString(PyString_AsString(value));
 
         return 0;
     }
@@ -702,6 +799,8 @@ static PyGetSetDef Iface_getseters[] = {
      "Interface's Broadcast address", NULL},
     {"flags", (getter)Iface_get_flags, (setter)Iface_set_flags,
      "Other Interface's flags", NULL},
+    {"hw_addr", (getter)Iface_get_hw_addr, (setter)Iface_set_hw_addr,
+     "Interface's MAC address", NULL},
     {"inet_addr", (getter)Iface_get_inet_addr, (setter)Iface_set_inet_addr,
      "Interface's IPv4 address", NULL},
     {"inet_mask", (getter)Iface_get_inet_mask, (setter)Iface_set_inet_mask,
@@ -712,9 +811,7 @@ static PyGetSetDef Iface_getseters[] = {
      "Interface's Network Mask v6 address", NULL},
     {"running", (getter)Iface_get_running, (setter)Iface_set_running,
      "Indicates if interface is running or not", NULL},
-    {"hw_addr", (getter)Iface_get_hw_addr, (setter)NULL,
-     "Interface's MAC address", NULL},
-    {"name", (getter)Iface_get_name, (setter)NULL,
+    {"name", (getter)Iface_get_name, (setter)Iface_set_name,
      "Interface's name", NULL},
     {"rx_bytes", (getter)Iface_get_rx_bytes, (setter)NULL,
      "Amount of bytes that the interface received", NULL},

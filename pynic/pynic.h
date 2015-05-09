@@ -53,8 +53,10 @@ static PyObject * Iface_get_updown(Iface *self, void *closure);
 /* Setters */
 static int Iface_set_broad_addr(Iface *self, PyObject *value, void *closure);
 static int Iface_set_flags(Iface *self, PyObject *value, void *closure);
+static int Iface_set_hw_addr(Iface *self, PyObject *value, void *closure);
 static int Iface_set_inet_addr(Iface *self, PyObject *value, void *closure);
 static int Iface_set_inet_mask(Iface *self, PyObject *value, void *closure);
+static int Iface_set_name(Iface *self, PyObject *value, void *closure);
 static int Iface_set_running(Iface *self, PyObject *value, void *closure);
 static int Iface_set_updown(Iface *self, PyObject *value, void *closure);
 /* Callback Routines */
