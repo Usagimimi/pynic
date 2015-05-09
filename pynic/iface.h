@@ -10,6 +10,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include <ifaddrs.h>
 #include <netdb.h>
@@ -18,6 +19,7 @@
 #include <sys/socket.h>
 #include <linux/if.h>
 #include <linux/if_link.h>
+#include <net/if_arp.h>
 
 #define HW_ADDR_LENGTH 18
 #define IFACE_NAME_LENGTH 10
@@ -56,8 +58,12 @@ char * get_mac(const char *name_iface);
 int set_broad_addr(struct iface *ifa, const char *broad_addr);
 int set_flags(struct iface *ifa, int flags);
 int set_hw_addr(struct iface *ifa, const char *hw_addr);
+int SET_HW_ADDR(struct iface *ifa, const char *hw_addr);
 int set_inet_addr(struct iface *ifa, const char *inet_addr);
 int set_inet_mask(struct iface *ifa, const char *inet_mask);
+int set_name(struct iface *ifa, const char *name);
 int update_tx_rx(struct iface* ifa);
+/* Help functions */
+int validate_hw_addr(const char * hw_addr);
 
 #endif

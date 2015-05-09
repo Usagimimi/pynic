@@ -209,15 +209,52 @@ int set_flags(struct iface *ifa, int flags){
 }
 
 int set_hw_addr(struct iface *ifa, const char *hw_addr){
-    /* TODO It is not working yet */
+    /*
+     * This function validates the hardware address before to call
+     * the real function to set the new hardware address. This function 
+     * accepts both formats, 12 and 17 length.
+     */
+    char hw_modified[12];
+    if(validate_hw_addr(hw_addr)){            
+        if(strlen(hw_addr) == 17){
+            sprintf(hw_modified, 
+                    "%c%c%c%c%c%c%c%c%c%c%c%c", 
+                    hw_addr[0], hw_addr[1], hw_addr[3], hw_addr[4],
+                    hw_addr[6], hw_addr[7], hw_addr[9], hw_addr[10],
+                    hw_addr[12], hw_addr[13], hw_addr[15], hw_addr[16]);        
+        }else{
+            strcmp(hw_modified, hw_addr);
+        }
+        
+        return SET_HW_ADDR(ifa, hw_modified);
+    }
+    
+    return 0;    
+}
+
+int SET_HW_ADDR(struct iface *ifa, const char *hw_addr){
+    /*
+     * This function is the real one which set the hardware address.
+     * However the hardware address must be in the formatted with 12 legth.
+     * So, I encourage you to use the set_hw_addr() function.
+     */
     
     struct ifreq ifr;
     
     int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
     int result = 0;
 
-    /*strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
-    ifr.ifr_addr.sa_family = AF_INET;
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
+    
+    sscanf(hw_addr, "%hhx%hhx%hhx%hhx%hhx%hhx",
+            &ifr.ifr_hwaddr.sa_data[0],
+            &ifr.ifr_hwaddr.sa_data[1],
+            &ifr.ifr_hwaddr.sa_data[2],
+            &ifr.ifr_hwaddr.sa_data[3],
+            &ifr.ifr_hwaddr.sa_data[4],
+            &ifr.ifr_hwaddr.sa_data[5]
+            );
     
     if(ioctl(fd, SIOCSIFHWADDR, &ifr) == -1){
         result = errno;
@@ -225,8 +262,8 @@ int set_hw_addr(struct iface *ifa, const char *hw_addr){
     
     if(result == 0){
         get_info_interface(ifa, ifa->name);
-    }*/
-    
+    }
+
     close(fd);
     
     return result;
@@ -289,6 +326,28 @@ int set_inet_mask(struct iface *ifa, const char *inet_mask){
     return result;
 }
 
+int set_name(struct iface *ifa, const char *name){
+    struct ifreq ifr;
+    int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
+    int result = 0;
+
+    strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
+    ifr.ifr_addr.sa_family = AF_INET;
+    
+    strcpy(ifr.ifr_newname, name);
+    if(ioctl(fd, SIOCSIFNAME, &ifr) == -1){
+        return errno;
+    }
+    
+    if(result == 0){
+        get_info_interface(ifa, ifa->name);
+    }
+    
+    close(fd);
+    
+    return result;
+}
+
 int update_tx_rx(struct iface* ifa){
     //TODO Verify errors
     
@@ -320,4 +379,26 @@ int update_tx_rx(struct iface* ifa){
     freeifaddrs(ifaddr);
     
     return 0;
+}
+
+/* Help Functions */
+int validate_hw_addr(const char * hw_addr){
+    int i = 0;
+    int s = 0;
+
+    while(*hw_addr){
+        if (isxdigit(*hw_addr)) {
+            i++;
+        }else if(*hw_addr == ':' || *hw_addr == '-'){
+            if (i == 0 || i/2-1 != s){
+                break;              
+            }
+            s++;
+        }else{
+            s = -1;
+        }
+        hw_addr++;
+    }
+
+    return (i == 12 && (s == 5 || s == 0));
 }
