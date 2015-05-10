@@ -478,6 +478,8 @@ Iface_set_hw_addr(Iface *self, PyObject *value, void *closure)
     struct iface ifa;
     int result;
     
+    char hw_addr[18];
+    
     if (value == NULL) {
         PyErr_SetString(PyExc_TypeError, "Cannot delete the running attribute");
         return -1;
@@ -489,37 +491,49 @@ Iface_set_hw_addr(Iface *self, PyObject *value, void *closure)
         return -1;
     }
     
-    if(PyObject_RichCompareBool(self->updown, Py_True, Py_EQ))
-    {
+    if(PyObject_RichCompareBool(self->updown, Py_True, Py_EQ)){
         PyErr_SetString(pynicIfaceError, "The interface must be down to complete this action.");
         
         return -1;
     }
     
-     if(!validate_hw_addr(PyString_AsString(value)))
-    {
+     if(!validate_hw_addr(PyString_AsString(value))){
         PyErr_SetString(pynicIfaceError, "Invalid Hardware Address");
         
         return -1;
+    }else{
+        /* TODO Make accepts both address format */
+        if(PyString_Size(value) == 12){
+            /* 12 length format is disable for a while */
+            
+            //normalize_hw_addr(PyString_AsString(value), hw_addr);
+            PyErr_SetString(pynicIfaceError, "Invalid Hardware Address");
+        
+            return -1;
+        }else{
+            strncpy(hw_addr, PyString_AsString(value), 17);
+        }
     }
     
     init_iface(&ifa);
 
     ifa.name = PyString_AsString(self->name);
-    result = SET_HW_ADDR(&ifa, PyString_AsString(value));
-    
+    result = SET_HW_ADDR(&ifa, hw_addr);
+
     /* TODO Make better error checking */
-    if(result == EPERM || result == EBUSY){
+    /*if(result == EPERM || result == EBUSY){
         PyErr_SetString(pynicIfaceError, strerror(result));
     }else if(result != 0){
         PyErr_SetString(pynicIfaceError, strerror(result));
-    }
+    }*/
     
     if(result != 0){
+        PyErr_SetString(pynicIfaceError, strerror(result));
         return -1;
     }else{
-        Py_DECREF(self->name);
-        self->name = PyString_FromString(PyString_AsString(value));
+        Py_DECREF(self->hw_addr);
+        /* TODO Identify why is appending a hex character at the end of the string */
+        self->hw_addr = PyString_FromString(hw_addr);
 
         return 0;
     }
