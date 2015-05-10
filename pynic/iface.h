@@ -65,5 +65,6 @@ int set_name(struct iface *ifa, const char *name);
 int update_tx_rx(struct iface* ifa);
 /* Help functions */
 int validate_hw_addr(const char * hw_addr);
+int normalize_hw_addr(const char * hw_addr, char hw_modified[]);
 
 #endif

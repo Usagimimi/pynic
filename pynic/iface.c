@@ -214,16 +214,14 @@ int set_hw_addr(struct iface *ifa, const char *hw_addr){
      * the real function to set the new hardware address. This function 
      * accepts both formats, 12 and 17 length.
      */
-    char hw_modified[12];
+    char hw_modified[17];
     if(validate_hw_addr(hw_addr)){            
-        if(strlen(hw_addr) == 17){
-            sprintf(hw_modified, 
-                    "%c%c%c%c%c%c%c%c%c%c%c%c", 
-                    hw_addr[0], hw_addr[1], hw_addr[3], hw_addr[4],
-                    hw_addr[6], hw_addr[7], hw_addr[9], hw_addr[10],
-                    hw_addr[12], hw_addr[13], hw_addr[15], hw_addr[16]);        
+        if(strlen(hw_addr) == 12){
+            normalize_hw_addr(hw_addr, hw_modified);
+            printf("%s\n", hw_modified);
         }else{
             strcmp(hw_modified, hw_addr);
+            printf("%s\n", hw_modified);
         }
         
         return SET_HW_ADDR(ifa, hw_modified);
@@ -239,6 +237,10 @@ int SET_HW_ADDR(struct iface *ifa, const char *hw_addr){
      * So, I encourage you to use the set_hw_addr() function.
      */
     
+    /* 
+     * TODO Try to understand why is not working when I use normalized.
+     */
+    
     struct ifreq ifr;
     
     int fd = socket(PF_INET, SOCK_DGRAM, IPPROTO_IP);
@@ -246,8 +248,8 @@ int SET_HW_ADDR(struct iface *ifa, const char *hw_addr){
 
     strncpy(ifr.ifr_name, ifa->name, IFNAMSIZ);
     ifr.ifr_hwaddr.sa_family = ARPHRD_ETHER;
-    
-    sscanf(hw_addr, "%hhx%hhx%hhx%hhx%hhx%hhx",
+
+    sscanf(hw_addr, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
             &ifr.ifr_hwaddr.sa_data[0],
             &ifr.ifr_hwaddr.sa_data[1],
             &ifr.ifr_hwaddr.sa_data[2],
@@ -381,7 +383,9 @@ int update_tx_rx(struct iface* ifa){
     return 0;
 }
 
-/* Help Functions */
+/* 
+ * Help Functions 
+ */
 int validate_hw_addr(const char * hw_addr){
     int i = 0;
     int s = 0;
@@ -401,4 +405,15 @@ int validate_hw_addr(const char * hw_addr){
     }
 
     return (i == 12 && (s == 5 || s == 0));
+}
+
+int normalize_hw_addr(const char * hw_addr, char hw_modified[]){
+    /* Normalizes to 17 length format */
+    
+    sprintf(hw_modified, "%c%c:%c%c:%c%c:%c%c:%c%c:%c%c", 
+            hw_addr[0], hw_addr[1], hw_addr[3], hw_addr[4],
+            hw_addr[6], hw_addr[7], hw_addr[9], hw_addr[10],
+            hw_addr[12], hw_addr[13], hw_addr[15], hw_addr[16]);
+    
+    return 1;
 }
