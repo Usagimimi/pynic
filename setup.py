@@ -1,7 +1,7 @@
 from setuptools import setup, Extension
 import os
 
-PYNIC_VERSION = '0.5'
+PYNIC_VERSION = '0.6'
 
 CLASSIFIERS = [
     "Development Status :: 4 - Beta",
@@ -20,8 +20,8 @@ CLASSIFIERS = [
     ]
  
 module = Extension('pynic',
-                    define_macros = [('MAJOR_VERSION', '0'),
-                                     ('MINOR_VERSION', '5')], 
+                    define_macros = [('MAJOR_VERSION', PYNIC_VERSION.split('.')[0]),
+                                     ('MINOR_VERSION', PYNIC_VERSION.split('.')[1])], 
                     sources = ['pynic/pynic.c', 'pynic/iface.c'])
  
 def read(fname):

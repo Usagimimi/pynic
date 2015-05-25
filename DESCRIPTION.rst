@@ -42,3 +42,9 @@ What's new 0.5
 - Removed set functions
 - Added getter and setter as class properties
 - Added constants
+
+What's new 0.6
+==============
+- Added setter for name
+- Added hardware address validation for both length format
+- Added setter for hardware address, but it is working just for 17 length format
