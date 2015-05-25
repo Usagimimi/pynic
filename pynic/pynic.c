@@ -514,7 +514,6 @@ Iface_set_hw_addr(Iface *self, PyObject *value, void *closure)
             strncpy(hw_addr, PyString_AsString(value), 17);
         }
     }
-    
     init_iface(&ifa);
 
     ifa.name = PyString_AsString(self->name);

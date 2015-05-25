@@ -8,6 +8,7 @@
     #define PyString_Check(obj) PyUnicode_Check(obj)
     #define PyString_FromString(obj) PyUnicode_FromString(obj)
     #define PyString_AsString(obj) PyUnicode_AsUTF8(obj)
+    #define PyString_Size(obj) PyUnicode_GET_LENGTH(obj)
     
     #define PyInt_Check(obj) PyLong_Check(obj)
     #define PyInt_FromLong(obj) PyLong_FromLong(obj)
